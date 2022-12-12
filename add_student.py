@@ -76,12 +76,14 @@ def main():
     semesterLabel.grid(column=0, row=2)
     semesterEntry.grid(column=1, row=2, pady=5)
 
+    s = ttk.Style()
+    s.configure("my.TButton", font="Helvetica 16 roman normal")
+
+    # Printing take image button
+
     # Printing Buttons
     buttonsFrame = ttk.Frame(window)
     buttonsFrame.pack()
-
-    s = ttk.Style()
-    s.configure("my.TButton", font="Helvetica 16 roman normal")
 
     cancelButton = ttk.Button(
         buttonsFrame, text="Cancel", style='my.TButton', command=lambda: window.destroy())
@@ -94,4 +96,5 @@ def main():
     window.mainloop()
 
 
-main()
+if __name__ == "__main__":
+    main()
