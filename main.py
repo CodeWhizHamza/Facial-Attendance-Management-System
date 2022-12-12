@@ -9,14 +9,14 @@ import student_list
 window = tk.Tk()
 window.title("HAM system")
 window.resizable(width=False, height=False)
-window.geometry('1280x720')
+window.geometry('600x400')
 
 titleFrame = tk.Frame(master=window)
 titleFrame.grid(pady=20)
 
 title = tk.Label(
-    master=titleFrame, text="ATTENDANCE MANAGEMENT SYSTEM", fg='#333', font='Arial 32 roman bold')
-title.pack(padx=232)
+    master=titleFrame, text="ATTENDANCE MANAGEMENT SYSTEM", fg='#333', font='Arial 23 roman bold')
+title.pack()
 
 buttonsFrame = tk.Frame(master=window)
 buttonsFrame.grid(pady=48)
