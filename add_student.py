@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 import cv2 as cv
 import face_recognition
+import sqlite3
+import csv
+import os
 
 
 def main():
@@ -93,7 +96,51 @@ def main():
         studentCmsID = cmsIdEntry.get()
         studentSemester = semesterEntry.get()
 
-        print("Hello, your data is valid")
+        # Connecting with database
+        db = sqlite3.connect("db.sqlite")
+        cursor = db.cursor()
+
+        tableName = "students"
+        directoryName = "known_encodings"
+
+        """
+        Creating a table with schema if it doesn't exists
+        CMS ID  Name  Semester
+        """
+        query = f"""CREATE TABLE IF NOT EXISTS {tableName} (
+            cmsId INTEGER NOT NULL PRIMARY KEY UNIQUE,
+            name TEXT,
+            semester INTEGER
+        );"""
+        cursor.execute(query)
+        db.commit()
+
+        # Adding student data into the table
+        query = f"""INSERT INTO {tableName} 
+                    VALUES (
+                        {studentCmsID}, 
+                        '{studentName}', 
+                        {studentSemester}
+                    );"""
+        cursor.execute(query)
+        db.commit()
+
+        # Closing connection with database
+        cursor.close()
+        db.close()
+
+        """
+        Creating a csv file where I would store 
+        face encodings for student
+        """
+
+        isDirectoryAlreadyPresent = os.path.exists(directoryName)
+        if not isDirectoryAlreadyPresent:
+            os.makedirs(directoryName)
+
+        with open(f"{directoryName}/{studentCmsID}.csv", 'w') as file:
+            writer = csv.writer(file)
+            writer.writerow(",".join(faceEncodings.get()))
 
         window.destroy()
 
@@ -134,28 +181,18 @@ def main():
     s.configure("my.TButton", font="Helvetica 16 roman normal")
 
     # Printing take image button
-    imageFrames = ttk.Frame(entriesFrame)
-    imageFrames.grid(column=1, row=3)
-
     takeImageButton = ttk.Button(
-        master=imageFrames, text="Take image", style="my.TButton", command=takeImage)
-    takeImageButton.grid(column=0, row=0)
-
-    confirmImageButton = ttk.Button(
-        master=imageFrames, text="Confirm Image", style="my.TButton")
-    confirmImageButton.grid(column=1, row=0, pady=10)
+        master=entriesFrame, text="Take image", style="my.TButton", command=takeImage)
+    takeImageButton.grid(column=1, row=3, sticky=tk.W, pady=10)
 
     # Printing Buttons
-    buttonsFrame = ttk.Frame(window)
-    buttonsFrame.pack()
-
     cancelButton = ttk.Button(
-        buttonsFrame, text="Cancel", style='my.TButton', command=lambda: window.destroy())
-    saveButton = ttk.Button(buttonsFrame, text="Save",
+        entriesFrame, text="Cancel", style='my.TButton', command=lambda: window.destroy())
+    saveButton = ttk.Button(entriesFrame, text="Save",
                             style='my.TButton', command=saveData)
 
-    saveButton.grid(column=0, row=0, columnspan=4)
-    cancelButton.grid(column=0, row=1, columnspan=4)
+    saveButton.grid(column=1, row=4, sticky=tk.W)
+    cancelButton.grid(column=1, row=5, sticky=tk.W)
 
     window.mainloop()
 
