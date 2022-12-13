@@ -111,8 +111,6 @@ def main():
         db = sqlite3.connect(databaseName)
         cursor = db.cursor()
 
-        directoryName = "known_encodings"
-
         """
         Creating a table with schema if it doesn't exists
         CMS ID, Name, Semester
