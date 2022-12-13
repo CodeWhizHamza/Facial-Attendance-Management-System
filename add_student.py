@@ -90,6 +90,13 @@ def main():
 
         return True
 
+    def isIdUnique(cursor, id):
+        cursor.execute(f"SELECT * FROM students WHERE cmsId={id};")
+        if len(cursor.fetchall()) == 0:
+            return True
+        else:
+            return False
+
     def saveData():
         isValid = validateUserData()
         if not isValid:
@@ -116,6 +123,13 @@ def main():
         ); """
         cursor.execute(query)
         db.commit()
+
+        # Check if the CMS ID is unique
+        if not isIdUnique(cursor, studentCmsID):
+            showMessage("This Id already exists.")
+            cursor.close()
+            db.close()
+            return
 
         # Adding student data into the table
         query = f"""INSERT INTO {tableName}
