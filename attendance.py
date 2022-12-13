@@ -2,6 +2,9 @@ import tkinter as tk
 import csv                                                              #imported csv for reading csv files
 import os                                                               #imported os for getting name of files in directory
 import pandas as pd                                                     #imported pandas to make series
+import cv2 as cv                                                        #imported opencv for image processing
+import face_recognition                                                 #imported face_recognition for recognizing images
+import numpy as np                                                      #imported numpy for math functions
 
 from config import*                                                     #imported config to get file paths
 
@@ -23,13 +26,9 @@ def main():
             return encodings
 
     knownEncodingFiles = os.listdir(f"./{directoryName}")               #Getting names of all csv files in directory
-    encodings=[]                                                        #variable definition
-    encodingPrimaryKey=[]                                               #variable definition
+    encodings=pd.Series(dtype='float64')                                #series for encodings definition
     for file in knownEncodingFiles:                                     #Looping over the files to extract encodings
-        encodings.append(getCSV(file))                                  #Saving encodings in encodins list
-        encodingPrimaryKey.append(file[0:len(file)-4])                  #Saving Encoding primary keys
-    
-    encodings = pd.Series(encodings, encodingPrimaryKey)                #Creating series of encodings with proper primary keys 
+        encodings[file[:-4]] = getCSV(file)                             #Saving encodings in Series with proper primary keys
 
     print(encodings)                                                    #printing encodings series
 
