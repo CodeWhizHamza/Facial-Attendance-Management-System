@@ -6,6 +6,8 @@ import sqlite3
 import csv
 import os
 
+from config import *
+
 
 def main():
     window = tk.Tk()
@@ -90,7 +92,7 @@ def main():
 
         return True
 
-    def isIdUnique(cursor, id, tableName):
+    def isIdUnique(cursor, id):
         cursor.execute(f"SELECT * FROM {tableName} WHERE cmsId={id};")
         if len(cursor.fetchall()) == 0:
             return True
@@ -106,10 +108,9 @@ def main():
         studentSemester = semesterEntry.get()
 
         # Connecting with database
-        db = sqlite3.connect("db.sqlite")
+        db = sqlite3.connect(databaseName)
         cursor = db.cursor()
 
-        tableName = "students"
         directoryName = "known_encodings"
 
         """
@@ -125,7 +126,7 @@ def main():
         db.commit()
 
         # Check if the CMS ID is unique
-        if not isIdUnique(cursor, studentCmsID, tableName):
+        if not isIdUnique(cursor, studentCmsID):
             showMessage("This Id already exists.")
             cursor.close()
             db.close()
