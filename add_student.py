@@ -9,7 +9,7 @@ def main():
     window.title("Add student")
     window.geometry('600x400')
 
-    imageEncodings = tk.Variable()
+    faceEncodings = tk.Variable()
 
     def showMessage(text):
         messageStr.set(text)
@@ -46,16 +46,16 @@ def main():
         cv.imshow("Image", frame)
 
         encodings = face_recognition.face_encodings(frame, [face])[0]
-        imageEncodings.set(encodings)
+        faceEncodings.set(encodings)
 
-    def saveData():
+    def validateUserData():
         studentName = nameEntry.get()
         studentCmsID = cmsIdEntry.get()
         studentSemester = semesterEntry.get()
 
         if len(studentName) == 0:
             showMessage("Please enter a valid name")
-            return
+            return False
         else:
             showMessage("")
 
@@ -63,11 +63,11 @@ def main():
             studentCmsID = int(studentCmsID)
         except:
             showMessage("Please enter a valid CMS ID (integer)")
-            return
+            return False
 
         if len(studentSemester) == 0:
             showMessage("Please enter a valid semester number")
-            return
+            return False
         else:
             showMessage("")
 
@@ -75,15 +75,25 @@ def main():
             studentSemester = int(studentSemester)
         except:
             showMessage("Please enter a valid semester number (integer)")
-            return
+            return False
 
-        if not imageEncodings.get():
+        if not faceEncodings.get():
             showMessage("Please provide an image.")
-            return
+            return False
         else:
             showMessage("")
 
-        # Saving data...
+        return True
+
+    def saveData():
+        isValid = validateUserData()
+        if not isValid:
+            return
+        studentName = nameEntry.get()
+        studentCmsID = cmsIdEntry.get()
+        studentSemester = semesterEntry.get()
+
+        print("Hello, your data is valid")
 
         window.destroy()
 
