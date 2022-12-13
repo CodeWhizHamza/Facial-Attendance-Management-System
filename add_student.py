@@ -49,7 +49,9 @@ def main():
         cv.imshow("Image", frame)
 
         encodings = face_recognition.face_encodings(frame, [face])[0]
-        faceEncodings.set(encodings)
+        encodingsInString = [str(value) for value in encodings]
+        encodingsInString = ",".join(encodingsInString)
+        faceEncodings.set(encodingsInString)
 
     def validateUserData():
         studentName = nameEntry.get()
@@ -96,7 +98,7 @@ def main():
         studentCmsID = cmsIdEntry.get()
         studentSemester = semesterEntry.get()
 
-        # Connecting with database
+        # # Connecting with database
         db = sqlite3.connect("db.sqlite")
         cursor = db.cursor()
 
@@ -107,30 +109,29 @@ def main():
         Creating a table with schema if it doesn't exists
         CMS ID  Name  Semester
         """
-        query = f"""CREATE TABLE IF NOT EXISTS {tableName} (
+        query = f"""CREATE TABLE IF NOT EXISTS {tableName}(
             cmsId INTEGER NOT NULL PRIMARY KEY UNIQUE,
             name TEXT,
             semester INTEGER
-        );"""
+        ); """
         cursor.execute(query)
         db.commit()
 
         # Adding student data into the table
-        query = f"""INSERT INTO {tableName} 
-                    VALUES (
-                        {studentCmsID}, 
-                        '{studentName}', 
+        query = f"""INSERT INTO {tableName}
+                    VALUES(
+                        {studentCmsID},
+                        '{studentName}',
                         {studentSemester}
-                    );"""
+                    ); """
         cursor.execute(query)
         db.commit()
 
         # Closing connection with database
         cursor.close()
         db.close()
-
         """
-        Creating a csv file where I would store 
+        Creating a csv file where I would store
         face encodings for student
         """
 
@@ -140,7 +141,7 @@ def main():
 
         with open(f"{directoryName}/{studentCmsID}.csv", 'w') as file:
             writer = csv.writer(file)
-            writer.writerow(",".join(faceEncodings.get()))
+            writer.writerow(faceEncodings.get().split(','))
 
         window.destroy()
 
