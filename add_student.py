@@ -90,8 +90,8 @@ def main():
 
         return True
 
-    def isIdUnique(cursor, id):
-        cursor.execute(f"SELECT * FROM students WHERE cmsId={id};")
+    def isIdUnique(cursor, id, tableName):
+        cursor.execute(f"SELECT * FROM {tableName} WHERE cmsId={id};")
         if len(cursor.fetchall()) == 0:
             return True
         else:
@@ -105,7 +105,7 @@ def main():
         studentCmsID = cmsIdEntry.get()
         studentSemester = semesterEntry.get()
 
-        # # Connecting with database
+        # Connecting with database
         db = sqlite3.connect("db.sqlite")
         cursor = db.cursor()
 
@@ -114,7 +114,7 @@ def main():
 
         """
         Creating a table with schema if it doesn't exists
-        CMS ID  Name  Semester
+        CMS ID, Name, Semester
         """
         query = f"""CREATE TABLE IF NOT EXISTS {tableName}(
             cmsId INTEGER NOT NULL PRIMARY KEY UNIQUE,
@@ -125,7 +125,7 @@ def main():
         db.commit()
 
         # Check if the CMS ID is unique
-        if not isIdUnique(cursor, studentCmsID):
+        if not isIdUnique(cursor, studentCmsID, tableName):
             showMessage("This Id already exists.")
             cursor.close()
             db.close()
