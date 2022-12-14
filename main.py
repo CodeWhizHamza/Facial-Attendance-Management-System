@@ -1,7 +1,5 @@
 import tkinter as tk
 
-from layer_names import *
-
 import add_student
 import attendance
 import student_list
