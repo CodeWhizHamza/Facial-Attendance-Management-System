@@ -9,12 +9,43 @@ import os
 from config import *
 
 
-def main():
+def editStudent(id):
     window = tk.Tk()
-    window.title("Add student")
+    window.title("Edit student")
     window.geometry('600x400')
 
+    studentId = tk.IntVar()
+    studentName = tk.StringVar()
+    studentSemester = tk.IntVar()
     faceEncodings = tk.Variable()
+
+    def loadStudentData():
+        db = sqlite3.connect(databaseName)
+        cursor = db.cursor()
+
+        query = f"SELECT * FROM {tableName} WHERE cmsId={id}"
+        cursor.execute(query)
+
+        cmsId, name, semester = cursor.fetchall()[0]
+        studentId.set(cmsId)
+        studentName.set(name)
+        studentSemester.set(semester)
+
+        cursor.close()
+        db.close()
+
+        with open(f"./{directoryName}/{id}.csv") as f:
+            reader = csv.reader(f)
+            encodings = []
+
+            for code in reader:
+                encodings.extend(code)
+
+            encodings = [float(code) for code in encodings]
+            faceEncodings.set(encodings)
+
+    loadStudentData()
+    print(faceEncodings.get())
 
     def showMessage(text):
         messageStr.set(text)
@@ -51,9 +82,9 @@ def main():
         cv.imshow("Image", frame)
 
         encodings = face_recognition.face_encodings(frame, [face])[0]
-        encodingsInString = [str(value) for value in encodings]
-        encodingsInString = ",".join(encodingsInString)
-        faceEncodings.set(encodingsInString)
+        encodings = [value for value in encodings]
+        # encodingsInString = ",".join(encodingsInString)
+        faceEncodings.set(encodings)
 
     def validateUserData():
         studentName = nameEntry.get()
@@ -92,13 +123,6 @@ def main():
 
         return True
 
-    def isIdUnique(cursor, id):
-        cursor.execute(f"SELECT * FROM {tableName} WHERE cmsId={id};")
-        if len(cursor.fetchall()) == 0:
-            return True
-        else:
-            return False
-
     def saveData():
         isValid = validateUserData()
         if not isValid:
@@ -111,32 +135,12 @@ def main():
         db = sqlite3.connect(databaseName)
         cursor = db.cursor()
 
-        """
-        Creating a table with schema if it doesn't exists
-        CMS ID, Name, Semester
-        """
-        query = f"""CREATE TABLE IF NOT EXISTS {tableName}(
-            cmsId INTEGER NOT NULL PRIMARY KEY UNIQUE,
-            name TEXT,
-            semester INTEGER
-        ); """
-        cursor.execute(query)
-        db.commit()
-
-        # Check if the CMS ID is unique
-        if not isIdUnique(cursor, studentCmsID):
-            showMessage("This Id already exists.")
-            cursor.close()
-            db.close()
-            return
-
         # Adding student data into the table
-        query = f"""INSERT INTO {tableName}
-                    VALUES(
-                        {studentCmsID},
-                        '{studentName}',
-                        {studentSemester}
-                    ); """
+        query = f"""UPDATE {tableName}
+                    SET cmsId={studentCmsID},
+                        name='{studentName}',
+                        semester={studentSemester}
+                    WHERE cmsId={id};"""
         cursor.execute(query)
         db.commit()
 
@@ -148,18 +152,19 @@ def main():
         face encodings for student
         """
 
+        os.remove(f"./{directoryName}/{id}.csv")
         isDirectoryAlreadyPresent = os.path.exists(directoryName)
         if not isDirectoryAlreadyPresent:
             os.makedirs(directoryName)
 
         with open(f"{directoryName}/{studentCmsID}.csv", 'w') as file:
             writer = csv.writer(file)
-            writer.writerow(faceEncodings.get().split(','))
+            writer.writerow(faceEncodings.get())
 
         window.destroy()
 
     title = ttk.Label(
-        master=window, text="Add students", foreground='#333', font='Arial 18 roman bold')
+        master=window, text="Update student details", foreground='#333', font='Arial 18 roman bold')
     title.pack(pady=18)
 
     messageStr = tk.StringVar()
@@ -173,21 +178,24 @@ def main():
     # Printing name input
     nameLabel = ttk.Label(entriesFrame, text="Name: ",
                           foreground='#333', font='Arial 16')
-    nameEntry = ttk.Entry(entriesFrame, font="Arial 16 roman normal")
+    nameEntry = ttk.Entry(
+        entriesFrame, font="Arial 16 roman normal", textvariable=studentName)
     nameLabel.grid(column=0, row=0)
     nameEntry.grid(column=1, row=0, pady=5)
 
     # Printing CMS ID input
     cmsIdLabel = ttk.Label(entriesFrame, text="CMS ID: ",
                            foreground='#333', font='Arial 16')
-    cmsIdEntry = ttk.Entry(entriesFrame, font="Arial 16 roman normal")
+    cmsIdEntry = ttk.Entry(
+        entriesFrame, font="Arial 16 roman normal", textvariable=studentId)
     cmsIdLabel.grid(column=0, row=1)
     cmsIdEntry.grid(column=1, row=1, pady=5)
 
     # Printing the semester input
     semesterLabel = ttk.Label(entriesFrame, text="Semester: ",
                               foreground='#333', font='Arial 16')
-    semesterEntry = ttk.Entry(entriesFrame, font="Arial 16 roman normal")
+    semesterEntry = ttk.Entry(
+        entriesFrame, font="Arial 16 roman normal", textvariable=studentSemester)
     semesterLabel.grid(column=0, row=2)
     semesterEntry.grid(column=1, row=2, pady=5)
 
@@ -212,4 +220,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    editStudent(4221)
