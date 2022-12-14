@@ -45,6 +45,7 @@ def editStudent(id):
             faceEncodings.set(encodings)
 
     loadStudentData()
+    # print(studentId.get())
 
     def showMessage(text):
         messageStr.set(text)
@@ -178,7 +179,10 @@ def editStudent(id):
     nameLabel = ttk.Label(entriesFrame, text="Name: ",
                           foreground='#333', font='Arial 16')
     nameEntry = ttk.Entry(
-        entriesFrame, font="Arial 16 roman normal", textvariable=studentName)
+        entriesFrame, font="Arial 16 roman normal")
+    nameEntry.delete(0, tk.END)
+    nameEntry.insert(0, studentName.get())
+
     nameLabel.grid(column=0, row=0)
     nameEntry.grid(column=1, row=0, pady=5)
 
@@ -186,7 +190,10 @@ def editStudent(id):
     cmsIdLabel = ttk.Label(entriesFrame, text="CMS ID: ",
                            foreground='#333', font='Arial 16')
     cmsIdEntry = ttk.Entry(
-        entriesFrame, font="Arial 16 roman normal", textvariable=studentId)
+        entriesFrame, font="Arial 16 roman normal")
+
+    cmsIdEntry.delete(0, tk.END)
+    cmsIdEntry.insert(0, studentId.get())
     cmsIdLabel.grid(column=0, row=1)
     cmsIdEntry.grid(column=1, row=1, pady=5)
 
@@ -194,21 +201,20 @@ def editStudent(id):
     semesterLabel = ttk.Label(entriesFrame, text="Semester: ",
                               foreground='#333', font='Arial 16')
     semesterEntry = ttk.Entry(
-        entriesFrame, font="Arial 16 roman normal", textvariable=studentSemester)
+        entriesFrame, font="Arial 16 roman normal")
+    semesterEntry.delete(0, tk.END)
+    semesterEntry.insert(0, studentSemester.get())
     semesterLabel.grid(column=0, row=2)
     semesterEntry.grid(column=1, row=2, pady=5)
 
-    s = ttk.Style()
-    s.configure("my.TButton", font="Helvetica 16 roman normal")
-
     # Printing take image button
     takeImageButton = ttk.Button(
-        master=entriesFrame, text="Take image", style="my.TButton", command=takeImage)
+        master=entriesFrame, text="Take image", command=takeImage)
     takeImageButton.grid(column=1, row=3, sticky=tk.W, pady=10)
 
     # Printing Buttons
     cancelButton = ttk.Button(
-        entriesFrame, text="Cancel", style='my.TButton', command=lambda: window.destroy())
+        entriesFrame, text="Cancel", command=lambda: window.destroy())
     saveButton = ttk.Button(entriesFrame, text="Save",
                             style='my.TButton', command=saveData)
 

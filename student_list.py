@@ -53,6 +53,18 @@ def main():
 
     # window.mainloop()
 
+    def printTable():
+        con = sqlite3.connect(databaseName)
+        cur = con.cursor()
+        con.commit()
+
+        cur.execute(f"SELECT * FROM {tableName}")
+        data = cur.fetchall()
+
+        for id, name, semester in data:
+            table.insert(parent='', index='end', iid=id, text='',
+                         values=(id, name, semester, 80))
+
     root = tk.Tk()
     root.title("Student details")
     root.geometry('720x480')
@@ -72,6 +84,12 @@ def main():
             print("No student selected.")
 
         editStudent(studentDetails.get()[0])
+
+        # empty the table
+        for i in table.get_children():
+            table.delete(i)
+        # print the table again
+        printTable()
 
     def deleteStudentDetails():
         if not studentDetails.get():
@@ -104,17 +122,7 @@ def main():
     table.heading('Semester', text="Semester")
     table.heading('Average attendance', text="Average attendance")
 
-    con = sqlite3.connect(databaseName)
-    cur = con.cursor()
-    con.commit()
-
-    cur.execute(f"SELECT * FROM {tableName}")
-    data = cur.fetchall()
-
-    for id, name, semester in data:
-        table.insert(parent='', index='end', iid=id, text='',
-                     values=(id, name, semester, 80))
-
+    printTable()
     table.pack()
 
     buttonsFrame = tk.Frame(root)
