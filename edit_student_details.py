@@ -45,7 +45,6 @@ def editStudent(id):
             faceEncodings.set(encodings)
 
     loadStudentData()
-    print(faceEncodings.get())
 
     def showMessage(text):
         messageStr.set(text)
