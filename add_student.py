@@ -99,6 +99,20 @@ def main():
         else:
             return False
 
+    def addNewColumnToEachCourseTable(columnName):
+        db = sqlite3.connect(databaseName)
+        cursor = db.cursor()
+        for course in courses:
+            query = f"""
+                ALTER TABLE {course}
+                ADD COLUMN `{columnName}` TEXT;
+            """
+            cursor.execute(query)
+            db.commit()
+
+        cursor.close()
+        db.close()
+
     def saveData():
         isValid = validateUserData()
         if not isValid:
@@ -115,7 +129,8 @@ def main():
         Creating a table with schema if it doesn't exists
         CMS ID, Name, Semester
         """
-        query = f"""CREATE TABLE IF NOT EXISTS {tableName}(
+        query = f"""
+        CREATE TABLE IF NOT EXISTS {tableName}(
             cmsId INTEGER NOT NULL PRIMARY KEY UNIQUE,
             name TEXT,
             semester INTEGER
@@ -131,23 +146,20 @@ def main():
             return
 
         # Adding student data into the table
-        query = f"""INSERT INTO {tableName}
-                    VALUES(
-                        {studentCmsID},
-                        '{studentName}',
-                        {studentSemester}
-                    ); """
+        query = f"""
+            INSERT INTO {tableName} 
+            VALUES ({studentCmsID}, '{studentName}', {studentSemester});
+        """
         cursor.execute(query)
         db.commit()
 
-        # Closing connection with database
         cursor.close()
         db.close()
+
         """
         Creating a csv file where I would store
         face encodings for student
         """
-
         isDirectoryAlreadyPresent = os.path.exists(directoryName)
         if not isDirectoryAlreadyPresent:
             os.makedirs(directoryName)
@@ -157,6 +169,8 @@ def main():
             writer.writerow(faceEncodings.get().split(','))
 
         window.destroy()
+
+        addNewColumnToEachCourseTable(studentCmsID)
 
     title = ttk.Label(
         master=window, text="Add students", foreground='#333', font='Arial 18 roman bold')
