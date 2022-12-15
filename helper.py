@@ -17,7 +17,12 @@ def printTable(table):
     con.close()
 
 
-def getColumnNames(table):
+def getColumnNames(table: str):
+    """
+    This function get table name as argument.
+    Then it returns user the list of columns which
+    that table have.
+    """
     con = sqlite3.connect(databaseName)
     cursor = con.cursor()
 
