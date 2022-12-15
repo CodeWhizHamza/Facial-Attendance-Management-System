@@ -7,7 +7,7 @@ import face_recognition  # imported face_recognition for recognizing images
 import numpy as np  # imported numpy for math functions
 from tkinter import ttk
 from time import sleep
-
+from datetime import datetime
 
 from PIL import Image, ImageTk                                          #
 from config import *  # imported config to get file paths
@@ -17,6 +17,23 @@ def main():
     window = tk.Tk()
     window.title("Start Attendance")
     window.geometry('720x520')
+
+    day = ["Monday", "Tuesday", "Wednesday",
+           "Thursday", "Friday", "Saturday", "Sunday"]
+
+    dt = datetime.now()
+
+    currentDay = day[dt.weekday()]
+
+    print(timeTable.loc[currentDay])
+
+    if currentDay == "Saturday" or currentDay == "Sunday":
+        exitLable = tk.Label(
+            window, text="It's a weekend, GO and enjoy your Weekend", font="Arial 24")
+        exitLable.pack()
+        exitButton = ttk.Button(
+            window, text="Close Window", command=lambda: window.destroy())
+        exitButton.pack()
 
     def getCSV(filename):  # function for getting encodings from csv files
         with open(f"./{directoryName}/{filename}") as f:
@@ -104,8 +121,7 @@ def main():
     terminateButton.pack()
 
     delay = 1
-    update()
-    print(timeTable)
+    # update()
     window.mainloop()
 
 
