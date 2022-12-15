@@ -226,7 +226,3 @@ def editStudent(id, table):
     cancelButton.grid(column=1, row=5, sticky=tk.W)
 
     window.mainloop()
-
-
-if __name__ == "__main__":
-    editStudent(4221)
