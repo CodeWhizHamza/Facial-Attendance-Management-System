@@ -5,6 +5,7 @@ from config import *
 
 from edit_student_details import editStudent
 from delete_student import deleteStudent
+from student_report import studentReport
 from helper import printTable
 
 
@@ -35,6 +36,12 @@ def main():
             print("No student selected.")
 
         deleteStudent(studentDetails.get()[0], table)
+
+    def getStudentReport():
+        if not studentDetails.get():
+            print("No student selected.")
+        else:
+            studentReport(studentDetails.get()[0], table)
 
     table = ttk.Treeview(root)
 
@@ -72,7 +79,7 @@ def main():
     deleteButton = ttk.Button(
         master=buttonsFrame, text="Delete student", command=deleteStudentDetails)
     getReportsButton = ttk.Button(
-        master=buttonsFrame, text="Get student report")
+        master=buttonsFrame, text="Get student report", command=getStudentReport)
 
     getReportsButton.grid(column=0, row=0)
     editButton.grid(column=1, row=0, padx=8)
