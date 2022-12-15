@@ -113,6 +113,21 @@ def main():
         cursor.close()
         db.close()
 
+    def createTablesIfNotExists():
+        db = sqlite3.connect(databaseName)
+        cursor = db.cursor()
+
+        cursor.execute(f"SELECT cmsId FROM {tableName};")
+        ids = [f"'{id}' TEXT" for id, in cursor.fetchall()]
+        ids = ", ".join(ids)
+        for course in courses:
+            query = f"CREATE TABLE IF NOT EXISTS {course} (dayTime TEXT PRIMARY KEY, {ids});"
+            cursor.execute(query)
+            db.commit()
+
+        cursor.close()
+        db.close()
+
     def saveData():
         isValid = validateUserData()
         if not isValid:
@@ -147,7 +162,7 @@ def main():
 
         # Adding student data into the table
         query = f"""
-            INSERT INTO {tableName} 
+            INSERT INTO {tableName}
             VALUES ({studentCmsID}, '{studentName}', {studentSemester});
         """
         cursor.execute(query)
@@ -169,7 +184,7 @@ def main():
             writer.writerow(faceEncodings.get().split(','))
 
         window.destroy()
-
+        createTablesIfNotExists()
         addNewColumnToEachCourseTable(studentCmsID)
 
     title = ttk.Label(
