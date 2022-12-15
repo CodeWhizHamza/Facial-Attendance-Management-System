@@ -7,9 +7,10 @@ import csv
 import os
 
 from config import *
+from helper import printTable
 
 
-def editStudent(id):
+def editStudent(id, table):
     window = tk.Tk()
     window.title("Edit student")
     window.geometry('600x400')
@@ -162,6 +163,14 @@ def editStudent(id):
             writer.writerow(faceEncodings.get())
 
         window.destroy()
+        updateTable(table)
+        return
+
+    def updateTable(table):
+        for item in table.get_children():
+            table.delete(item)
+
+        printTable(table)
 
     title = ttk.Label(
         master=window, text="Update student details", foreground='#333', font='Arial 18 roman bold')

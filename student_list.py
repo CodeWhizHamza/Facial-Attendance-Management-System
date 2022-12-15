@@ -5,6 +5,7 @@ from config import *
 
 from edit_student_details import editStudent
 from delete_student import deleteStudent
+from helper import printTable
 
 
 def main():
@@ -53,18 +54,6 @@ def main():
 
     # window.mainloop()
 
-    def printTable():
-        con = sqlite3.connect(databaseName)
-        cur = con.cursor()
-        con.commit()
-
-        cur.execute(f"SELECT * FROM {tableName}")
-        data = cur.fetchall()
-
-        for id, name, semester in data:
-            table.insert(parent='', index='end', iid=id, text='',
-                         values=(id, name, semester, 80))
-
     root = tk.Tk()
     root.title("Student details")
     root.geometry('720x480')
@@ -82,14 +71,14 @@ def main():
     def editStudentDetails():
         if not studentDetails.get():
             print("No student selected.")
-
-        editStudent(studentDetails.get()[0])
+        else:
+            editStudent(studentDetails.get()[0], table)
 
         # empty the table
-        for i in table.get_children():
-            table.delete(i)
+        # for i in table.get_children():
+        #     table.delete(i)
         # print the table again
-        printTable()
+        # printTable()
 
     def deleteStudentDetails():
         if not studentDetails.get():
@@ -122,7 +111,7 @@ def main():
     table.heading('Semester', text="Semester")
     table.heading('Average attendance', text="Average attendance")
 
-    printTable()
+    printTable(table)
     table.pack()
 
     buttonsFrame = tk.Frame(root)
