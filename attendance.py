@@ -105,6 +105,7 @@ def main():
 
     delay = 1
     update()
+    print(timeTable)
     window.mainloop()
 
 
