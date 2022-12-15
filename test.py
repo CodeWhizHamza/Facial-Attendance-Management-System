@@ -1,26 +1,18 @@
+import tkinter as tk
 import sqlite3
 
 from config import *
 
 
-con = sqlite3.connect(databaseName)
-cur = con.cursor()
+root = tk.Tk()
 
-query = ""
-cur.execute(query)
-con.commit()
+reportFrame = tk.Frame(master=root)
+reportFrame.pack()
 
-cur.execute(f"SELECT (cmsId) FROM {tableName};")
-studentsId = cur.fetchall()
+for index, course in enumerate(list(courses)):
+    tk.Label(master=reportFrame, text=f"{course}:", font=("Times New Roman", 24)).grid(
+        row=index, column=0,  sticky=tk.E, padx=8)
+    tk.Label(master=reportFrame, text=f"{70}%", font=("Times New Roman", 24)).grid(
+        row=index, column=1,  sticky=tk.W, padx=8)
 
-for course in courses:
-    query = f"""
-        ALTER TABLE {course}
-        DROP COLUMN `something`
-    """
-    cur.execute(query)
-    con.commit()
-
-
-cur.close()
-con.close()
+root.mainloop()
