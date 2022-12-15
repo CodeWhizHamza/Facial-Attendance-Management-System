@@ -74,12 +74,6 @@ def main():
         else:
             editStudent(studentDetails.get()[0], table)
 
-        # empty the table
-        # for i in table.get_children():
-        #     table.delete(i)
-        # print the table again
-        # printTable()
-
     def deleteStudentDetails():
         if not studentDetails.get():
             print("No student selected.")
