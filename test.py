@@ -1,18 +1,46 @@
-import tkinter as tk
 import sqlite3
-
 from config import *
+from helper import getColumnNames
+
+cs110 = {
+    "15-12-2022-900": {
+        "407251": 'P',
+        "368494": 'A',
+        "429551": 'P'
+    },
+    "15-12-2022-1000": {
+        "407251": 'P',
+        "368494": 'A',
+        "429551": 'P'
+    },
+    "16-12-2022-900": {
+        "407251": 'P',
+        "368494": 'A',
+        "429551": 'A'
+    }
+}
 
 
-root = tk.Tk()
+def getAttendencePercentageFor(id, course):
+    course = course.upper()
 
-reportFrame = tk.Frame(master=root)
-reportFrame.pack()
+    db = sqlite3.connect(databaseName)
+    cursor = db.cursor()
 
-for index, course in enumerate(list(courses)):
-    tk.Label(master=reportFrame, text=f"{course}:", font=("Times New Roman", 24)).grid(
-        row=index, column=0,  sticky=tk.E, padx=8)
-    tk.Label(master=reportFrame, text=f"{70}%", font=("Times New Roman", 24)).grid(
-        row=index, column=1,  sticky=tk.W, padx=8)
+    query = f"SELECT '{id}' FROM `{course}`;"
+    cursor.execute(query)
+    data = cursor.fetchall()
 
-root.mainloop()
+    print(data)
+
+    cursor.close()
+    db.close()
+
+    # totalClasses = len(cs110.keys())
+    # presentCount = 0
+
+    # for _, report in cs110.items():
+    #     if report[id] == 'P':
+    #         presentCount += 1
+
+    # return presentCount / totalClasses * 100
