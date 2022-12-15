@@ -31,7 +31,7 @@ def getColumnNames(table):
     return columnNames
 
 
-def markAttendence(students: list, course: str, dayTime: str) -> None:
+def markAttendance(students: list, course: str, dayTime: str) -> None:
     """
     This function accepts a list of student ids which are supposed to
     be marked as present.
