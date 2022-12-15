@@ -163,15 +163,10 @@ def editStudent(id, table):
             writer.writerow(faceEncodings.get())
 
         window.destroy()
-        updateTable(table)
-        return
 
-    def updateTable(table):
         for item in table.get_children():
             table.delete(item)
-
         printTable(table)
-
     title = ttk.Label(
         master=window, text="Update student details", foreground='#333', font='Arial 18 roman bold')
     title.pack(pady=18)
