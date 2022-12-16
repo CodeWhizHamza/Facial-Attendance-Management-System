@@ -19,6 +19,9 @@ timeTable = pd.DataFrame(
     timeTable, index=["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
 
 
-# print(set([item for item in timeTable.items()]))
-courses = set()
-[[courses.add(i) for i in item if i is not None] for item in timeTable.values]
+courses = list()
+for item in timeTable.values:
+    for i in item:
+        if i is None or i in courses:
+            continue
+        courses.append(i)
