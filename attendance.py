@@ -37,7 +37,7 @@ def main():
         # Saving encodings in Series with proper primary keys
 
     # Getting a video capture object for the camera
-    capture = cv.VideoCapture(1)
+    capture = cv.VideoCapture(0)
     capture.set(cv.CAP_PROP_FRAME_WIDTH, 720)  # Width and
     capture.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
 
@@ -76,13 +76,18 @@ def main():
                 knownEncodings.tolist(), frame_encoding, tolerance=0.5)
             name = "Unknown"
 
+            font = cv.FONT_HERSHEY_DUPLEX
             if True in matches:
                 cmsID = knownEncodings.index[matches.index(True)]
-                font = cv.FONT_HERSHEY_DUPLEX
 
                 cv.rectangle(frame, (left, bottom-35),
                              (right, bottom), (255, 0, 0), cv.FILLED)
                 cv.putText(frame, cmsID, (left + 6, bottom - 6),
+                           font, 1.0, (255, 255, 255), 1)
+            else:
+                cv.rectangle(frame, (left, bottom-35),
+                             (right, bottom), (255, 0, 0), cv.FILLED)
+                cv.putText(frame, name, (left + 6, bottom - 6),
                            font, 1.0, (255, 255, 255), 1)
 
         else:
@@ -96,16 +101,20 @@ def main():
 
         window.after(delay, update)  # printing encodings series
 
+    def closeWindow():
+        window.destroy()
+        capture.release()
+
     videoCapture = tk.Canvas(window, width=720, height=480)
     videoCapture.pack()
 
     terminateButton = ttk.Button(
-        window, text="Terminate", command=lambda: window.destroy())
+        window, text="Terminate", command=closeWindow)
     terminateButton.pack()
 
     delay = 1
     update()
-    print(timeTable)
+    # print(timeTable)
     window.mainloop()
 
 
