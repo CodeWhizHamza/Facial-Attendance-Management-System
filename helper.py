@@ -2,6 +2,16 @@ from config import *
 import sqlite3
 
 
+def getAveragePercentage(id):
+    # get percentage of every course
+    # find average of that
+    # return it
+    percentageSum = 0
+    for course in courses:
+        percentageSum += getAttendancePercentageFor(id, course)
+    return percentageSum / len(courses)
+
+
 def printTable(table):
     con = sqlite3.connect(databaseName)
     cur = con.cursor()
@@ -11,7 +21,7 @@ def printTable(table):
 
     for id, name, semester in data:
         table.insert(parent='', index='end', iid=id, text='',
-                     values=(id, name, semester, 80))
+                     values=(id, name, semester, getAveragePercentage(id)))
 
     cur.close()
     con.close()
