@@ -42,8 +42,8 @@ def markAttendance(students: list, course: str, dayTime: str) -> None:
     be marked as present.
     Second argument is the course for which this attendance is to be
     marked.
-    Third is the unique Identifier for this day and this time of this 
-    class.
+    Third is the unique Identifier for this day and this time of this
+    class. (Example: 15-12-2022-900)
     """
     course = course.upper()
     columns = getColumnNames(course)
