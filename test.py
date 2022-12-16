@@ -1,20 +1,16 @@
-import tkinter
-import customtkinter
+import pandas as pd
+from config import *
 
-customtkinter.set_appearance_mode("System")
-customtkinter.set_default_color_theme("green")
-
-app = customtkinter.CTk()  # create CTk window like you do with the Tk window
-app.geometry("400x240")
-
-
-def button_function():
-    print("button pressed")
+cols = ['DateTime', *list(courses)]
+table = pd.DataFrame(columns=cols)
+# print(cols)
+record = pd.Series(['15-12-2022-900', 'A', 'P', 'A',
+                   'P', 'P', 'P', 'A', 'A'], index=cols)
 
 
-# Use CTkButton instead of tkinter Button
-button = customtkinter.CTkButton(
-    master=app, text="CTkButton", command=button_function)
-button.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
+table = table.append(record, ignore_index=True)
+table = table.append(record, ignore_index=True)
+table = table.append(record, ignore_index=True)
+table = table.append(record, ignore_index=True)
 
-app.mainloop()
+table.to_csv('test.csv', sep=',')
