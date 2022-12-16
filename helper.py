@@ -70,3 +70,43 @@ def markAttendance(students: list, course: str, dayTime: str) -> None:
 
     cursor.close()
     db.close()
+
+
+def getTotalNumberOfRecords(table):
+    db = sqlite3.connect(databaseName)
+    cursor = db.cursor()
+
+    cursor.execute(f"SELECT COUNT(*) FROM {table};")
+    totalNumberOfRecords = cursor.fetchone()[0]
+
+    cursor.close()
+    db.close()
+    return totalNumberOfRecords
+
+
+def getAttendancePercentageFor(id: int, course: str) -> float:
+    """This function will return percentage of presence of a student
+    whose id is passed in the current course.
+
+    Args:
+        id (int): CMS ID of student
+        course (str): Course code
+
+    Returns:
+        float: Percentage of attendance
+    """
+    course = course.upper()
+    db = sqlite3.connect(databaseName)
+    cursor = db.cursor()
+    query = f"SELECT `{id}` FROM `{course}`;"
+    cursor.execute(query)
+    data = cursor.fetchall()
+    # getting first item from the data returned from sql
+    # That is either 'A' or 'P'
+    data = [d for d, in data]
+    cursor.close()
+    db.close()
+
+    totalRecordsCount = getTotalNumberOfRecords(course)
+    presentCount = data.count('P')
+    return presentCount / totalRecordsCount * 100
