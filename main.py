@@ -20,23 +20,29 @@ title = ctk.CTkLabel(
     master=titleFrame, text="ATTENDANCE MANAGEMENT SYSTEM", font=font)
 title.grid()
 
+buttonProperties = {
+    'pady': 8,
+    'padx': 26,
+    'column': 0
+}
+
 buttonsFrame = ctk.CTkFrame(master=window, bg_color="transparent")
-buttonsFrame.pack(padx=100, pady=48, expand=1, fill=tk.X)
+buttonsFrame.pack(padx=210, pady=48, expand=1, fill=tk.X)
 
 getAttendanceReportButton = ctk.CTkButton(
-    master=buttonsFrame, text="Get attendance report",  width=30, font=font)
-getAttendanceReportButton.grid(pady=8)
+    master=buttonsFrame, text="Get attendance report", width=250, font=font)
+getAttendanceReportButton.grid(**buttonProperties)
 
 addStudentButton = ctk.CTkButton(
-    master=buttonsFrame, text="Add student",  width=30, font=font, command=add_student.main)
-addStudentButton.grid(pady=8)
+    master=buttonsFrame, text="Add student", font=font, width=250, command=add_student.main)
+addStudentButton.grid(**buttonProperties)
 
 showAllStudentsButton = ctk.CTkButton(
-    master=buttonsFrame, text="Show All students",  width=30, font=font, command=student_list.main)
-showAllStudentsButton.grid(pady=8)
+    master=buttonsFrame, text="Show All students", width=250, font=font, command=student_list.main)
+showAllStudentsButton.grid(**buttonProperties)
 
 initializeSystem = ctk.CTkButton(
-    master=buttonsFrame, text="Initialize System",  width=30, font=font, command=attendance.main)
-initializeSystem.grid(pady=8)
+    master=buttonsFrame, text="Initialize System", width=250, font=font, command=attendance.main)
+initializeSystem.grid(**buttonProperties)
 
 window.mainloop()
