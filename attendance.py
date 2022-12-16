@@ -23,11 +23,13 @@ def main():
 
     dt = datetime.now()
 
-    currentDay = "Saturday"
+    currentDay = day[dt.weekday()]
 
     # print(timeTable.loc[currentDay])
 
     isRunLoop = True
+
+    cmsIDList = []
 
     if currentDay == "Saturday" or currentDay == "Sunday":
         exitLable = tk.Label(
@@ -38,45 +40,29 @@ def main():
         exitButton.pack()
         isRunLoop = False
 
-    elif 900 > int(dt.strftime("%H%M")) or int(dt.strftime("%H%M")) > 1700:
+    '''elif 900 > int(dt.strftime("%H%M")) or int(dt.strftime("%H%M")) > 1700:
         exitLable = tk.Label(
             window, text="You Tried to initialize system out of class Hours.\n Please try again later -_-", font="Arial 24")
         exitLable.pack()
         exitButton = ttk.Button(
             window, text="Close Window", command=lambda: window.destroy())
         exitButton.pack()
-        isRunLoop = False
+        isRunLoop = False'''
 
-        # Getting a video capture object for the camera
+    # Getting a video capture object for the camera
     capture = cv.VideoCapture(1)
     capture.set(cv.CAP_PROP_FRAME_WIDTH, 720)  # Width and
     capture.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
 
-    def getCSV(filename):  # function for getting encodings from csv files
-        with open(f"./{directoryName}/{filename}") as f:
-            reader = csv.reader(f)
-            encodings = []
-            for code in reader:
-                encodings.extend(code)
-            encodings = [float(code) for code in encodings]
-        return encodings
+    def getFrame():  # Height of Camera
+        ret, frame = capture.read()
+        if ret:
+            return (ret, cv.cvtColor(frame, cv.COLOR_BGR2RGB))
+        else:
+            return (ret, None)
 
-        # Getting names of all csv files in directory
-    knownEncodingFiles = os.listdir(f"./{directoryName}")
-    # series for encodings definition
-    knownEncodings = pd.Series(dtype='float64')
-    for file in knownEncodingFiles:  # Looping over the files to extract encodings
-        knownEncodings[file[:-4]] = getCSV(file)
-
-        # Saving encodings in Series with proper primary key
-
-    def mainLoop() -> None:
-        def getFrame():  # Height of Camera
-            ret, frame = capture.read()
-            if ret:
-                return (ret, cv.cvtColor(frame, cv.COLOR_BGR2RGB))
-            else:
-                return (ret, None)
+    def identifyCMSIDFromFace():
+        cmsID = "0"
         ret, frame = getFrame()
         if not ret:
             return
@@ -120,8 +106,34 @@ def main():
         photo = ImageTk.PhotoImage(master=videoCapture, image=img)
         videoCapture.create_image(360, 240, image=photo)
         videoCapture.image = photo  # printing encodings series
+        return int(cmsID)
+
+    def getCSV(filename):  # function for getting encodings from csv files
+        with open(f"./{directoryName}/{filename}") as f:
+            reader = csv.reader(f)
+            encodings = []
+            for code in reader:
+                encodings.extend(code)
+            encodings = [float(code) for code in encodings]
+        return encodings
+
+        # Getting names of all csv files in directory
+    knownEncodingFiles = os.listdir(f"./{directoryName}")
+    # series for encodings definition
+    knownEncodings = pd.Series(dtype='float64')
+    for file in knownEncodingFiles:  # Looping over the files to extract encodings
+        knownEncodings[file[:-4]] = getCSV(file)
+
+        # Saving encodings in Series with proper primary key
+
+    def mainLoop() -> None:
+        cmsID = identifyCMSIDFromFace()
+        if cmsID:
+            if cmsID not in cmsIDList:
+                cmsIDList.append(cmsID)
 
     def closeWindow():
+        print(cmsIDList)
         window.destroy()
         capture.release()
 
