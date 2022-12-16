@@ -5,6 +5,8 @@ import add_student
 import attendance
 import student_list
 
+ctk.set_appearance_mode("System")
+ctk.set_default_color_theme("green")
 
 window = ctk.CTk()
 window.title("HAM system")
