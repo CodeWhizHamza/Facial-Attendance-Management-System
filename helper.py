@@ -119,4 +119,9 @@ def getAttendancePercentageFor(id: int, course: str) -> float:
 
     totalRecordsCount = getTotalNumberOfRecords(course)
     presentCount = data.count('P')
-    return presentCount / totalRecordsCount * 100
+    try:
+        percentage = presentCount / totalRecordsCount * 100
+    except ZeroDivisionError:
+        return 0
+
+    return percentage
