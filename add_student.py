@@ -5,20 +5,28 @@ import face_recognition
 import sqlite3
 import csv
 import os
+import customtkinter as ctk
 
 from config import *
 
+ctk.set_appearance_mode("System")
+ctk.set_default_color_theme("green")
+
 
 def main():
-    window = tk.Tk()
+    window = ctk.CTk()
     window.title("Add student")
-    window.geometry('600x400')
+    window.geometry('720x480')
+
+    font24 = ctk.CTkFont('Arial', 24)
+    font16 = ctk.CTkFont('Arial', 16)
+    font14 = ctk.CTkFont('Arial', 14)
 
     faceEncodings = tk.Variable()
 
     def showMessage(text):
         messageStr.set(text)
-        message.config(text=messageStr.get())
+        message.configure(text=messageStr.get())
 
     def takeImage():
         capture = cv.VideoCapture(0)
@@ -187,55 +195,52 @@ def main():
         createTablesIfNotExists()
         addNewColumnToEachCourseTable(studentCmsID)
 
-    title = ttk.Label(
-        master=window, text="Add students", foreground='#333', font='Arial 18 roman bold')
-    title.pack(pady=18)
+    titleFrame = ctk.CTkFrame(master=window)
+    titleFrame.pack(pady=24)
+    title = ctk.CTkLabel(
+        master=titleFrame, text="Add students", font=font24)
+    title.pack(pady=16, padx=48)
 
     messageStr = tk.StringVar()
-    message = ttk.Label(
-        window, font="Arial 14 roman normal", foreground="#ff0220")
+    message = ctk.CTkLabel(
+        window, font=font14, text=None, text_color="#ff0550")
     message.pack()
 
-    entriesFrame = ttk.Frame(window)
+    entriesFrame = ctk.CTkFrame(window)
     entriesFrame.pack()
 
     # Printing name input
-    nameLabel = ttk.Label(entriesFrame, text="Name: ",
-                          foreground='#333', font='Arial 16')
-    nameEntry = ttk.Entry(entriesFrame, font="Arial 16 roman normal")
-    nameLabel.grid(column=0, row=0)
-    nameEntry.grid(column=1, row=0, pady=5)
+    nameLabel = ctk.CTkLabel(entriesFrame, text="Name: ", font=font16)
+    nameEntry = ctk.CTkEntry(entriesFrame, font=font16, width=220)
+    nameLabel.grid(column=0, row=0, padx=16, sticky=tk.W)
+    nameEntry.grid(column=1, row=0, pady=12, padx=24)
 
     # Printing CMS ID input
-    cmsIdLabel = ttk.Label(entriesFrame, text="CMS ID: ",
-                           foreground='#333', font='Arial 16')
-    cmsIdEntry = ttk.Entry(entriesFrame, font="Arial 16 roman normal")
-    cmsIdLabel.grid(column=0, row=1)
-    cmsIdEntry.grid(column=1, row=1, pady=5)
+    cmsIdLabel = ctk.CTkLabel(entriesFrame, text="CMS ID: ", font=font16)
+    cmsIdEntry = ctk.CTkEntry(entriesFrame, font=font16, width=220)
+    cmsIdLabel.grid(column=0, row=1, padx=16, sticky=tk.W)
+    cmsIdEntry.grid(column=1, row=1, padx=24)
 
     # Printing the semester input
-    semesterLabel = ttk.Label(entriesFrame, text="Semester: ",
-                              foreground='#333', font='Arial 16')
-    semesterEntry = ttk.Entry(entriesFrame, font="Arial 16 roman normal")
-    semesterLabel.grid(column=0, row=2)
-    semesterEntry.grid(column=1, row=2, pady=5)
-
-    s = ttk.Style()
-    s.configure("my.TButton", font="Helvetica 16 roman normal")
+    semesterLabel = ctk.CTkLabel(entriesFrame, text="Semester: ",
+                                 font=font16)
+    semesterEntry = ctk.CTkEntry(entriesFrame, font=font16, width=220)
+    semesterLabel.grid(column=0, row=2, padx=16, sticky=tk.W)
+    semesterEntry.grid(column=1, row=2, pady=12, padx=24)
 
     # Printing take image button
-    takeImageButton = ttk.Button(
-        master=entriesFrame, text="Take image", style="my.TButton", command=takeImage)
-    takeImageButton.grid(column=1, row=3, sticky=tk.W, pady=10)
+    takeImageButton = ctk.CTkButton(
+        master=entriesFrame, text="Take image", command=takeImage)
+    takeImageButton.grid(column=1, row=3, pady=10, padx=24, sticky=tk.W)
 
     # Printing Buttons
-    cancelButton = ttk.Button(
-        entriesFrame, text="Cancel", style='my.TButton', command=lambda: window.destroy())
-    saveButton = ttk.Button(entriesFrame, text="Save",
-                            style='my.TButton', command=saveData)
+    cancelButton = ctk.CTkButton(
+        entriesFrame, text="Cancel", command=lambda: window.destroy())
+    saveButton = ctk.CTkButton(entriesFrame, text="Save",
+                               command=saveData)
 
-    saveButton.grid(column=1, row=4, sticky=tk.W)
-    cancelButton.grid(column=1, row=5, sticky=tk.W)
+    saveButton.grid(column=1, row=4, sticky=tk.W, padx=24)
+    cancelButton.grid(column=1, row=5, sticky=tk.W, pady=8, padx=24)
 
     window.mainloop()
 
