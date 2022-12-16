@@ -16,11 +16,11 @@ window.geometry('720x480')
 font = ctk.CTkFont(family="Arial", size=20)
 
 titleFrame = ctk.CTkFrame(master=window)
-titleFrame.pack(pady=20)
+titleFrame.pack(pady=48)
 
 title = ctk.CTkLabel(
     master=titleFrame, text="ATTENDANCE MANAGEMENT SYSTEM", font=font)
-title.grid(padx=8, pady=8)
+title.grid(padx=32, pady=8)
 
 buttonProperties = {
     'pady': 8,
@@ -29,7 +29,7 @@ buttonProperties = {
 }
 
 buttonsFrame = ctk.CTkFrame(master=window, bg_color="transparent")
-buttonsFrame.pack(padx=210, pady=48, expand=1, fill=tk.X)
+buttonsFrame.pack(padx=210, pady=0, fill=tk.X)
 
 getAttendanceReportButton = ctk.CTkButton(
     master=buttonsFrame, text="Get attendance report", width=250, font=font)
