@@ -18,7 +18,7 @@ titleFrame.pack(pady=20)
 
 title = ctk.CTkLabel(
     master=titleFrame, text="ATTENDANCE MANAGEMENT SYSTEM", font=font)
-title.grid()
+title.grid(padx=8, pady=8)
 
 buttonProperties = {
     'pady': 8,
