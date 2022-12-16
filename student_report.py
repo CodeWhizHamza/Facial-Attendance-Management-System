@@ -1,8 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
 import sqlite3
+import csv
 
 from config import *
+from helper import getAttendancePercentageFor
+from tkinter.filedialog import asksaveasfile
 
 
 def studentReport(id, table):
@@ -26,6 +29,22 @@ def studentReport(id, table):
         studentSemester.set(semester)
 
         cursor.close()
+
+    def downloadReport():
+        files = [('CSV files', '*.csv'), ('All files', '*.*')]
+
+        with open(asksaveasfile(filetypes=files, defaultextension=files).name, 'w') as f:
+            csvWriter = csv.writer(f)
+            courseList = list(courses)
+            times = ['9:00', '10:00', '11:00',
+                     '12:00', '14:00', '15:00', '16:00']
+            csvWriter.writerow(['DateTime', *times])
+
+            fullAttendanceTable = pd.DataFrame()
+
+            for course in courseList:
+                pass
+
     loadData()
     heading = tk.Label(master=window, text=f"{studentName.get()}'s Attendance Report",
                        font='Arial 20 roman normal')
@@ -33,11 +52,11 @@ def studentReport(id, table):
     reportFrame = tk.Frame(master=window)
     reportFrame.pack()
     for index, course in enumerate(list(courses)):
-        a = tk.Label(master=reportFrame, text=f"{course}:", font=(
+        tk.Label(master=reportFrame, text=f"{course}:", font=(
             "Arial, 16")).grid(row=index, column=0, sticky=tk.E, padx=8)
-        b = tk.Label(master=reportFrame, text="80%", font=(
+        tk.Label(master=reportFrame, text=getAttendancePercentageFor(id, course), font=(
             "Arial, 16")).grid(row=index, column=1, sticky=tk.W, padx=8)
     detailsButton = ttk.Button(
-        master=window, text="Download detailed report")
+        master=window, text="Download detailed report", command=downloadReport())
     detailsButton.place(relx=0.75, rely=0.90)
     window.mainloop()
