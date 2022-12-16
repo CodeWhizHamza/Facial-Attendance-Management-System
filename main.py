@@ -1,38 +1,50 @@
 import tkinter as tk
+import customtkinter as ctk
 
 import add_student
 import attendance
 import student_list
 
-window = tk.Tk()
+ctk.set_appearance_mode("System")
+ctk.set_default_color_theme("green")
+
+window = ctk.CTk()
 window.title("HAM system")
 window.resizable(width=False, height=False)
-window.geometry('600x400')
+window.geometry('720x480')
 
-titleFrame = tk.Frame(master=window)
-titleFrame.grid(pady=20)
+font = ctk.CTkFont(family="Arial", size=20)
 
-title = tk.Label(
-    master=titleFrame, text="ATTENDANCE MANAGEMENT SYSTEM", fg='#333', font='Arial 23 roman bold')
-title.pack()
+titleFrame = ctk.CTkFrame(master=window)
+titleFrame.pack(pady=48)
 
-buttonsFrame = tk.Frame(master=window)
-buttonsFrame.grid(pady=48)
+title = ctk.CTkLabel(
+    master=titleFrame, text="ATTENDANCE MANAGEMENT SYSTEM", font=font)
+title.grid(padx=32, pady=8)
 
-getAttendanceReportButton = tk.Button(
-    master=buttonsFrame, text="Get attendance report", font="Arial 18 roman normal", width=30)
-getAttendanceReportButton.pack(pady=8)
+buttonProperties = {
+    'pady': 8,
+    'padx': 26,
+    'column': 0
+}
 
-addStudentButton = tk.Button(
-    master=buttonsFrame, text="Add student", font="Arial 18 roman normal", width=30, command=add_student.main)
-addStudentButton.pack(pady=8)
+buttonsFrame = ctk.CTkFrame(master=window, bg_color="transparent")
+buttonsFrame.pack(padx=210, pady=0, fill=tk.X)
 
-showAllStudentsButton = tk.Button(
-    master=buttonsFrame, text="Show All students", font="Arial 18 roman normal", width=30, command=student_list.main)
-showAllStudentsButton.pack(pady=8)
+getAttendanceReportButton = ctk.CTkButton(
+    master=buttonsFrame, text="Get attendance report", width=250, font=font)
+getAttendanceReportButton.grid(**buttonProperties)
 
-initializeSystem = tk.Button(
-    master=buttonsFrame, text="Initialize System", font="Arial 18 roman normal", width=30, command=attendance.main)
-initializeSystem.pack(pady=8)
+addStudentButton = ctk.CTkButton(
+    master=buttonsFrame, text="Add student", font=font, width=250, command=add_student.main)
+addStudentButton.grid(**buttonProperties)
+
+showAllStudentsButton = ctk.CTkButton(
+    master=buttonsFrame, text="Show All students", width=250, font=font, command=student_list.main)
+showAllStudentsButton.grid(**buttonProperties)
+
+initializeSystem = ctk.CTkButton(
+    master=buttonsFrame, text="Initialize System", width=250, font=font, command=attendance.main)
+initializeSystem.grid(**buttonProperties)
 
 window.mainloop()
