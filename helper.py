@@ -1,3 +1,4 @@
+import calendar
 from config import *
 import sqlite3
 
@@ -115,3 +116,70 @@ def getAttendancePercentageFor(id: int, course: str) -> float:
         return 0
 
     return percentage
+
+
+def getWeekDay(date: str, sep: str = '-') -> str:
+    """This function takes a date in form of string and an optional separator which the date is separated by. Then it return the weekday for that date.
+
+    Args:
+        date (str): The date string in form of day[sep]month[sep]year
+        sep (str): The [sep] that separates the entities of date
+
+    Returns:
+        str: Week day at that date
+    """
+    day, month, year = date.split(sep)
+    return calendar.day_name[calendar.weekday(
+        int(year), int(month), int(day))]
+
+
+def getAttendanceTableFor(id: str) -> pd.DataFrame:
+    """This function takes a student cms Id, then create a table for his attendance in all courses and return it as a DataFrame object.
+
+    Args:
+        id (str): Id of student
+
+    Returns:
+        pd.DataFrame: DataFrame object for attendance of student.
+    """
+    db = sqlite3.connect(databaseName)
+    cur = db.cursor()
+    tableOfAttendance = []
+
+    timeTableWeekDays = timeTable.to_dict('tight')['index']
+    timeTableTimes = timeTable.to_dict('tight')['columns']
+    timeTableClasses = timeTable.to_dict('tight')['data']
+
+    for course in courses:
+        cur.execute(f"SELECT `dayTime`, `{id}` FROM `{course}`;")
+        records = cur.fetchall()
+
+        # dayTime is in form of date-month-year-time
+        # So first 3 are date and last one is time
+        dates = list(["-".join(date.split('-')[:3])
+                      for date, _ in records])
+        times = list([date.split('-')[-1]
+                      for date, _ in records])
+        attendances = list([attendance
+                           for _, attendance in records])
+        for time in times:
+            if len(time) == 3:
+                times[times.index(time)] = '0' + time
+
+        for date in dates:
+            record = [date] + ["-"] * len(timeTableTimes)
+            for time, attendance in zip(times, attendances):
+                weekDayIndex = timeTableWeekDays.index(getWeekDay(date))
+                timeIndex = timeTableTimes.index(time)
+
+                record[timeIndex +
+                       1] = f"{timeTableClasses[weekDayIndex][timeIndex]}: {attendance}"
+            tableOfAttendance.append(record)
+
+    cur.close()
+    db.close()
+
+    attendanceDataFrame = pd.DataFrame(tableOfAttendance,
+                                       columns=(['Date'] + timeTableTimes))
+
+    return attendanceDataFrame
