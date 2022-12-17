@@ -74,7 +74,6 @@ def main():
         # shouldRunAttendance = False
 
         attendanceTimerThread.cancel()
-        print("Attendance Done")
 
         window.destroy()
 
@@ -163,7 +162,6 @@ def main():
                 smallFrame, faces)[0]
             cmsId = getCMSIdFor(face_encoding)
             displayMarkerOnFace(frame, currentFace, cmsId)
-            print(cmsId, cmsIDList)
             if cmsId and cmsId not in cmsIDList:
                 cmsIDList.append(cmsId)
 
@@ -180,8 +178,6 @@ def main():
         addStateToJSON('attendanceVariables.json', todayClassesRecord)
         capture.release()
         endAttendance()
-        # attendanceTimerThread.cancel()
-        print(cmsIDList)
 
     cameraFeedContainer = tk.Canvas(window, width=720, height=480)
     cameraFeedContainer.pack()
