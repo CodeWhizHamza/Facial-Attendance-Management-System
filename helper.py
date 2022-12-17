@@ -9,10 +9,12 @@ def printTable(table):
 
     cur.execute(f"SELECT * FROM {tableName}")
     data = cur.fetchall()
-
+    percentageSum = 0
     for id, name, semester in data:
+        for course in courses:
+            percentageSum += getAttendancePercentageFor(id, course)
         table.insert(parent='', index='end', iid=id, text='',
-                     values=(id, name, semester, 80))
+                     values=(id, name, semester, f'{percentageSum/8}%'))
 
     cur.close()
     con.close()
