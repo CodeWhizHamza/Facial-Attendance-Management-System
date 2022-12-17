@@ -1,5 +1,6 @@
 import tkinter as tk
 import customtkinter as ctk
+from PIL import Image
 
 import add_student
 import attendance
@@ -9,18 +10,26 @@ ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("green")
 
 window = ctk.CTk()
-window.title("HAM system")
+window.title("AMS")
 window.resizable(width=False, height=False)
 window.geometry('720x480')
+window.call('wm', 'iconphoto', window._w,
+            tk.PhotoImage(file=r'resources/logo.png'))
 
 font = ctk.CTkFont(family="Arial", size=20)
+font16 = ctk.CTkFont(family="Arial", size=16)
 
-titleFrame = ctk.CTkFrame(master=window)
-titleFrame.pack(pady=48)
+titleFrame = ctk.CTkFrame(
+    master=window, bg_color="transparent", fg_color="transparent")
+titleFrame.pack(pady=16)
 
+titleImage = ctk.CTkLabel(
+    titleFrame, image=ctk.CTkImage(light_image=Image.open('resources/logo.png'), dark_image=Image.open('resources/logo.png'), size=(160, 160)), text="")
+titleImage.grid(row=0, column=0, sticky=tk.W)
 title = ctk.CTkLabel(
-    master=titleFrame, text="ATTENDANCE MANAGEMENT SYSTEM", font=font)
-title.grid(padx=32, pady=8)
+    master=titleFrame, text="Attendance Management\nSystem", font=font16, anchor=tk.W, justify='left')
+title.grid(pady=8, row=0, column=1, sticky=tk.E)
+
 
 buttonProperties = {
     'pady': 8,
