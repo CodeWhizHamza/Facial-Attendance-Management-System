@@ -4,7 +4,7 @@ import sqlite3
 import csv
 
 from config import *
-from helper import getAttendancePercentageFor
+from helper import getAttendancePercentageFor, getAttendanceTableFor
 from tkinter.filedialog import asksaveasfile
 
 
@@ -31,19 +31,12 @@ def studentReport(id, table):
         cursor.close()
 
     def downloadReport():
-        files = [('CSV files', '*.csv'), ('All files', '*.*')]
-
-        with open(asksaveasfile(filetypes=files, defaultextension=files).name, 'w') as f:
-            csvWriter = csv.writer(f)
-            courseList = list(courses)
-            times = ['9:00', '10:00', '11:00',
-                     '12:00', '14:00', '15:00', '16:00']
-            csvWriter.writerow(['DateTime', *times])
-
-            fullAttendanceTable = pd.DataFrame()
-
-            for course in courseList:
-                pass
+        files = [('Excel files', '*.xlsx'), ('All files', '*.*')]
+        attendanceReport = getAttendanceTableFor(id)
+        filename = asksaveasfile(
+            filetypes=files, defaultextension=files, initialfile=f'{id}')
+        if filename:
+            attendanceReport.to_excel(filename.name, index=False)
 
     loadData()
     heading = tk.Label(master=window, text=f"{studentName.get()}'s Attendance Report",
@@ -54,9 +47,9 @@ def studentReport(id, table):
     for index, course in enumerate(list(courses)):
         tk.Label(master=reportFrame, text=f"{course}:", font=(
             "Arial, 16")).grid(row=index, column=0, sticky=tk.E, padx=8)
-        tk.Label(master=reportFrame, text=getAttendancePercentageFor(id, course), font=(
+        tk.Label(master=reportFrame, text=f'{getAttendancePercentageFor(id, course)}%', font=(
             "Arial, 16")).grid(row=index, column=1, sticky=tk.W, padx=8)
     detailsButton = ttk.Button(
-        master=window, text="Download detailed report", command=downloadReport())
-    detailsButton.place(relx=0.75, rely=0.90)
+        master=window, text="Download detailed report", command=downloadReport)
+    detailsButton.place(relx=0.15, rely=0.90)
     window.mainloop()
