@@ -16,6 +16,7 @@ def main():
     window.geometry('720x480')
     window.iconbitmap('resources/logo.ico')
     window.resizable(width=False, height=False)
+    window.focus()
 
     ctk.set_appearance_mode("System")
     ctk.set_default_color_theme("green")
@@ -40,18 +41,18 @@ def main():
             return True
 
     def editStudentDetails():
-        studentId = studentDetails.get()[0]
         if studentSelected():
+            studentId = studentDetails.get()[0]
             editStudent(studentId, table)
 
     def deleteStudentDetails():
-        studentId = studentDetails.get()[0]
         if studentSelected():
+            studentId = studentDetails.get()[0]
             deleteStudent(studentId, table)
 
     def getStudentReport():
-        studentId = studentDetails.get()[0]
         if studentSelected():
+            studentId = studentDetails.get()[0]
             studentReport(studentId)
 
     tableFrame = ctk.CTkFrame(window)
