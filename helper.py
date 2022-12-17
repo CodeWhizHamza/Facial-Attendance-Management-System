@@ -1,3 +1,6 @@
+import csv
+import os
+import cv2 as cv
 import calendar
 from config import *
 import sqlite3
@@ -207,3 +210,34 @@ def loadName(id):
     _, name, _ = cursor.fetchall()[0]
     cursor.close()
     return name
+
+
+def getFrameInRGB(capture):
+    success, frame = capture.read()
+    return cv.cvtColor(frame, cv.COLOR_BGR2RGB) if success else None
+
+
+def getDefaultAttendanceRecord(today):
+    return {
+        "day": today,
+        "0900": 0, "1000": 0, "1100": 0, "1200": 0, "1300": 0, "1400": 0, "1500": 0, "1600": 0
+    }
+
+
+def getCSV(filename):
+    with open(f"./{directoryName}/{filename}") as f:
+        reader = csv.reader(f)
+        encodings = []
+        for code in reader:
+            encodings.extend(code)
+        encodings = [float(code) for code in encodings]
+    return encodings
+
+
+def getKnownEncodings():
+    knownEncodingFiles = os.listdir(f"./{directoryName}")
+    knownEncodings = pd.Series(dtype='float64')
+    for file in knownEncodingFiles:
+        knownEncodings[file[:-4]] = getCSV(file)
+
+    return knownEncodings
