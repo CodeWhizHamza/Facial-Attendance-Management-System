@@ -1,6 +1,7 @@
 import calendar
 from config import *
 import sqlite3
+from tkinter.filedialog import asksaveasfile
 
 
 def printTable(table):
@@ -19,6 +20,15 @@ def printTable(table):
 
     cur.close()
     con.close()
+
+
+def downloadReport(id):
+    files = [('Excel files', '*.xlsx'), ('All files', '*.*')]
+    attendanceReport = getAttendanceTableFor(id)
+    filename = asksaveasfile(
+        filetypes=files, defaultextension=files, initialfile=f'{id}')
+    if filename:
+        attendanceReport.to_excel(filename.name, index=False)
 
 
 def getColumnNames(table: str):
@@ -186,3 +196,13 @@ def getAttendanceTableFor(id: str) -> pd.DataFrame:
                                        columns=(['Date'] + timeTableTimes))
 
     return attendanceDataFrame
+
+
+def loadName(id):
+    db = sqlite3.connect(databaseName)
+    cursor = db.cursor()
+    query = f"SELECT * FROM {tableName} WHERE cmsId={id}"
+    cursor.execute(query)
+    _, name, _ = cursor.fetchall()[0]
+    cursor.close()
+    return name
