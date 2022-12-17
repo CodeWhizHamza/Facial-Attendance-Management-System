@@ -47,7 +47,7 @@ def studentReport(id, table):
     for index, course in enumerate(list(courses)):
         tk.Label(master=reportFrame, text=f"{course}:", font=(
             "Arial, 16")).grid(row=index, column=0, sticky=tk.E, padx=8)
-        tk.Label(master=reportFrame, text=f'{getAttendancePercentageFor(id, course)}%', font=(
+        tk.Label(master=reportFrame, text=f'{getAttendancePercentageFor(id, course):.2f}%', font=(
             "Arial, 16")).grid(row=index, column=1, sticky=tk.W, padx=8)
     detailsButton = ttk.Button(
         master=window, text="Download detailed report", command=downloadReport)
