@@ -59,7 +59,7 @@ def main():
         attendenceTimeThread.cancel()
         print("Attendance Done")
 
-    timeForAttendence = 10.0  # In seconds
+    timeForAttendence = 30.0  # In seconds
 
     attendenceTimeThread = th.Timer(timeForAttendence, endAttendence)
 
@@ -117,6 +117,8 @@ def main():
 
     def identifyCMSIDFromFace():
         cmsID = "0"
+        count = 0
+        previousCmsID = "0"
         # cmsID = "415216"
         # print("camera")
         ret, frame = getFrame()
@@ -144,6 +146,22 @@ def main():
             font = cv.FONT_HERSHEY_DUPLEX
             if True in matches:
                 cmsID = knownEncodings.index[matches.index(True)]
+                previousCmsID = cmsID
+                while count < 3:
+                    face = face_locations[0]
+                    frame_encoding = face_recognition.face_encodings(smallFrame, [face])[
+                        0]
+                    matches = face_recognition.compare_faces(
+                        knownEncodings.tolist(), frame_encoding, tolerance=0.5)
+                    if True in matches:
+                        cmsID = knownEncodings.index[matches.index(True)]
+                        if cmsID == previousCmsID:
+                            count += 1
+                        else:
+                            previousCmsID = cmsID
+                            count = 0
+                    else:
+                        continue
 
                 cv.rectangle(frame, (left, bottom-35),
                              (right, bottom), (255, 0, 0), cv.FILLED)
@@ -193,6 +211,8 @@ def main():
         if currentTimeTable[currentPeriodSLot] != None:
             if not isPeriodDone[currentPeriodSLot]:
                 if not isTimerStarted:
+                    global cmsIDList
+                    cmsIDList = []
                     attendenceTimeThread.start()
                     isPeriodDone[currentPeriodSLot] = 1
                     isTimerStarted = True
