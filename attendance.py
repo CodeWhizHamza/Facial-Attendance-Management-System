@@ -8,9 +8,17 @@ import numpy as np  # imported numpy for math functions
 from tkinter import ttk
 from time import sleep
 from datetime import datetime
+import threading as th
+import json
 
 from PIL import Image, ImageTk                                          #
 from config import *  # imported config to get file paths
+from helper import *
+
+global isTimerStarted
+isTimerStarted = False
+global shouldRunAttendance
+shouldRunAttendance = False
 
 
 def main():
@@ -18,36 +26,71 @@ def main():
     window.title("Start Attendance")
     window.geometry('720x520')
 
+    isRunLoop = True
+
     day = ["Monday", "Tuesday", "Wednesday",
            "Thursday", "Friday", "Saturday", "Sunday"]
+
+    with open('attendanceVariables.json', 'r') as file:
+        isPeriodDone = json.load(file)
 
     dt = datetime.now()
 
     currentDay = day[dt.weekday()]
 
-    # print(timeTable.loc[currentDay])
+    currentTimeTable = timeTable.loc["Monday"]  # Replace with currentDay
 
-    isRunLoop = True
-
+    global cmsIDList
     cmsIDList = []
 
-    if currentDay == "Saturday" or currentDay == "Sunday":
-        exitLable = tk.Label(
-            window, text="It's a weekend, GO and enjoy your Weekend\n:)", font="Arial 24")
-        exitLable.pack()
-        exitButton = ttk.Button(
-            window, text="Close Window", command=lambda: window.destroy())
-        exitButton.pack()
-        isRunLoop = False
+    def markTheAttendence():
+        global cmsIDList
+        markAttendance(cmsIDList, currentTimeTable["0900"], dt.strftime(
+            "%d-%m-%Y-0900"))  # replace with dt.strftime("%H00")
+        cmsIDList = []
+        print("Data in table")
 
-    '''elif 900 > int(dt.strftime("%H%M")) or int(dt.strftime("%H%M")) > 1700:
-        exitLable = tk.Label(
-            window, text="You Tried to initialize system out of class Hours.\n Please try again later -_-", font="Arial 24")
-        exitLable.pack()
-        exitButton = ttk.Button(
-            window, text="Close Window", command=lambda: window.destroy())
-        exitButton.pack()
-        isRunLoop = False'''
+    def endAttendence() -> None:
+        markTheAttendence()
+        global isTimerStarted
+        global shouldRunAttendance
+        isTimerStarted = False
+        shouldRunAttendance = False
+        attendenceTimeThread.cancel()
+        print("Attendance Done")
+
+    timeForAttendence = 10.0  # In seconds
+
+    attendenceTimeThread = th.Timer(timeForAttendence, endAttendence)
+
+    # if currentDay == "Saturday" or currentDay == "Sunday":
+    #     exitLable = tk.Label(
+    #         window, text="It's a weekend, GO and enjoy your Weekend\n:)", font="Arial 24")
+    #     exitLable.pack()
+    #     exitButton = ttk.Button(
+    #         window, text="Close Window", command=lambda: window.destroy())
+    #     exitButton.pack()
+    #     isRunLoop = False
+
+    # elif 900 > int(dt.strftime("%H%M")) or int(dt.strftime("%H%M")) > 1700:
+    #     exitLable = tk.Label(
+    #         window, text="You Tried to initialize system out of class Hours.\n Please try again later -_-", font="Arial 24")
+    #     exitLable.pack()
+    #     exitButton = ttk.Button(
+    #         window, text="Close Window", command=lambda: window.destroy())
+    #     exitButton.pack()
+    #     isRunLoop = False
+
+    if isPeriodDone["day"] != "Monday":    # Replace with currentDay
+        isPeriodDone["day"] = "Monday"  # Replace with currentDay
+        isPeriodDone["0900"] = 0
+        isPeriodDone["1000"] = 0
+        isPeriodDone["1100"] = 0
+        isPeriodDone["1200"] = 0
+        isPeriodDone["1300"] = 0
+        isPeriodDone["1400"] = 0
+        isPeriodDone["1500"] = 0
+        isPeriodDone["1600"] = 0
 
     # Getting a video capture object for the camera
     capture = cv.VideoCapture(1)
@@ -61,8 +104,21 @@ def main():
         else:
             return (ret, None)
 
+    def printTextOnFrame(text):
+        ret, frame = getFrame()
+        if not ret:
+            return
+        cv.putText(frame, text,
+                   (50, 50),  cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 1, cv.LINE_AA)
+        img = Image.fromarray(frame)
+        photo = ImageTk.PhotoImage(master=videoCapture, image=img)
+        videoCapture.create_image(360, 240, image=photo)
+        videoCapture.image = photo  # printing encodings series
+
     def identifyCMSIDFromFace():
         cmsID = "0"
+        # cmsID = "415216"
+        # print("camera")
         ret, frame = getFrame()
         if not ret:
             return
@@ -70,7 +126,7 @@ def main():
         face_locations = face_recognition.face_locations(smallFrame)
 
         if len(face_locations) == 0:
-            print("No face detected")
+            pass
         elif len(face_locations) == 1:
             face = face_locations[0]
             frame_encoding = face_recognition.face_encodings(smallFrame, [face])[
@@ -91,8 +147,10 @@ def main():
 
                 cv.rectangle(frame, (left, bottom-35),
                              (right, bottom), (255, 0, 0), cv.FILLED)
+
                 cv.putText(frame, cmsID, (left + 6, bottom - 6),
                            font, 1.0, (255, 255, 255), 1)
+
             else:
                 cv.rectangle(frame, (left, bottom-35),
                              (right, bottom), (255, 0, 0), cv.FILLED)
@@ -106,7 +164,8 @@ def main():
         photo = ImageTk.PhotoImage(master=videoCapture, image=img)
         videoCapture.create_image(360, 240, image=photo)
         videoCapture.image = photo  # printing encodings series
-        return int(cmsID)
+
+        return cmsID
 
     def getCSV(filename):  # function for getting encodings from csv files
         with open(f"./{directoryName}/{filename}") as f:
@@ -127,12 +186,36 @@ def main():
         # Saving encodings in Series with proper primary key
 
     def mainLoop() -> None:
-        cmsID = identifyCMSIDFromFace()
-        if cmsID:
-            if cmsID not in cmsIDList:
-                cmsIDList.append(cmsID)
+        global isTimerStarted
+        global shouldRunAttendance
+        dt = datetime.now()
+        currentPeriodSLot = "0900"  # add later dt.strftime("%H00")
+        if currentTimeTable[currentPeriodSLot] != None:
+            if not isPeriodDone[currentPeriodSLot]:
+                if not isTimerStarted:
+                    attendenceTimeThread.start()
+                    isPeriodDone[currentPeriodSLot] = 1
+                    isTimerStarted = True
+                    shouldRunAttendance = True
+                elif shouldRunAttendance == False:
+                    exitLable = tk.Label(
+                        window, text="No scheduled Class for current period :)", font="Arial 24")
+                    exitLable.pack()
+
+            if shouldRunAttendance:
+                cmsID = identifyCMSIDFromFace()
+                if cmsID:
+                    if cmsID not in cmsIDList:
+                        cmsIDList.append(cmsID)
+            else:
+                printTextOnFrame("Attendance Already Done")
+
+        else:
+            printTextOnFrame("Class not Scheduled for Now")
 
     def closeWindow():
+        with open('attendanceVariables.json', 'w') as file:
+            json.dump(isPeriodDone, file)
         print(cmsIDList)
         window.destroy()
         capture.release()
