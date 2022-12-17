@@ -1,21 +1,36 @@
-import tkinter
-import customtkinter
+import sqlite3
 
-customtkinter.set_appearance_mode("System")
-customtkinter.set_default_color_theme("green")
+con = sqlite3.connect('db.sqlite')
+cur = con.cursor()
 
-app = customtkinter.CTk()  # create CTk window like you do with the Tk window
-app.geometry("400x240")
+cur.execute("DELETE FROM MATH161;")
+con.commit()
 
-
-def button_function():
-    print("button pressed")
+cur.execute('SELECT * FROM MATH161;')
+print(cur.fetchall())
 
 
-# Use CTkButton instead of tkinter Button
-button = customtkinter.CTkButton(
-    master=app, text="CTkButton", command=button_function)
-button.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
+cur.close()
+con.close()
+
+# import json
+
+# # some JSON:
+# x = {"day": "Monday",
+#      "0900": 0,
+#      "1000": 0,
+#      "1100": 0,
+#      "1200": 0,
+#      "1300": 0,
+#      "1400": 0,
+#      "1500": 0,
+#      "1600": 0}
+
+# with open('attendanceVariables.json', 'w') as file:
+#     json.dump(x, file)
+
+# with open('attendanceVariables.json', 'r') as file:
+#     y = json.load(file)
 
 # # the result is a Python dictionary:
 # print(y["day"])

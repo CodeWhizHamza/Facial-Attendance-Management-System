@@ -38,7 +38,25 @@ def main():
 
     currentDay = day[dt.weekday()]
 
-    currentTimeTable = timeTable.loc["Monday"]  # Replace with currentDay
+    if currentDay == "Saturday" or currentDay == "Sunday":
+        exitLable = tk.Label(
+            window, text="It's a weekend, GO and enjoy your Weekend\n:)", font="Arial 24")
+        exitLable.pack()
+        exitButton = ttk.Button(
+            window, text="Close Window", command=lambda: window.destroy())
+        exitButton.pack()
+        isRunLoop = False
+
+    elif 900 > int(dt.strftime("%H%M")) or int(dt.strftime("%H%M")) > 1700:
+        exitLable = tk.Label(
+            window, text="You Tried to initialize system out of class Hours.\n Please try again later -_-", font="Arial 24")
+        exitLable.pack()
+        exitButton = ttk.Button(
+            window, text="Close Window", command=lambda: window.destroy())
+        exitButton.pack()
+        isRunLoop = False
+
+    currentTimeTable = timeTable.loc[currentDay]  # Replace with currentDay
 
     global cmsIDList
     cmsIDList = []
@@ -46,7 +64,7 @@ def main():
     def markTheAttendence():
         global cmsIDList
         markAttendance(cmsIDList, currentTimeTable["0900"], dt.strftime(
-            "%d-%m-%Y-0900"))  # replace with dt.strftime("%H00")
+            "%d-%m-%Y-%H00"))
         cmsIDList = []
         print("Data in table")
 
@@ -59,30 +77,12 @@ def main():
         attendenceTimeThread.cancel()
         print("Attendance Done")
 
-    timeForAttendence = 10.0  # In seconds
+    timeForAttendence = 900.0  # In seconds
 
     attendenceTimeThread = th.Timer(timeForAttendence, endAttendence)
 
-    # if currentDay == "Saturday" or currentDay == "Sunday":
-    #     exitLable = tk.Label(
-    #         window, text="It's a weekend, GO and enjoy your Weekend\n:)", font="Arial 24")
-    #     exitLable.pack()
-    #     exitButton = ttk.Button(
-    #         window, text="Close Window", command=lambda: window.destroy())
-    #     exitButton.pack()
-    #     isRunLoop = False
-
-    # elif 900 > int(dt.strftime("%H%M")) or int(dt.strftime("%H%M")) > 1700:
-    #     exitLable = tk.Label(
-    #         window, text="You Tried to initialize system out of class Hours.\n Please try again later -_-", font="Arial 24")
-    #     exitLable.pack()
-    #     exitButton = ttk.Button(
-    #         window, text="Close Window", command=lambda: window.destroy())
-    #     exitButton.pack()
-    #     isRunLoop = False
-
-    if isPeriodDone["day"] != "Monday":    # Replace with currentDay
-        isPeriodDone["day"] = "Monday"  # Replace with currentDay
+    if isPeriodDone["day"] != currentDay:
+        isPeriodDone["day"] = currentDay
         isPeriodDone["0900"] = 0
         isPeriodDone["1000"] = 0
         isPeriodDone["1100"] = 0
@@ -116,7 +116,7 @@ def main():
         videoCapture.image = photo  # printing encodings series
 
     def identifyCMSIDFromFace():
-        cmsID = "0"
+        cmsID = 0
         # cmsID = "415216"
         # print("camera")
         ret, frame = getFrame()
@@ -144,6 +144,22 @@ def main():
             font = cv.FONT_HERSHEY_DUPLEX
             if True in matches:
                 cmsID = knownEncodings.index[matches.index(True)]
+                previousCmsID = cmsID
+                while count < 3:
+                    face = face_locations[0]
+                    frame_encoding = face_recognition.face_encodings(smallFrame, [face])[
+                        0]
+                    matches = face_recognition.compare_faces(
+                        knownEncodings.tolist(), frame_encoding, tolerance=0.5)
+                    if True in matches:
+                        cmsID = knownEncodings.index[matches.index(True)]
+                        if cmsID == previousCmsID:
+                            count += 1
+                        else:
+                            previousCmsID = cmsID
+                            count = 0
+                    else:
+                        continue
 
                 cv.rectangle(frame, (left, bottom-35),
                              (right, bottom), (255, 0, 0), cv.FILLED)
@@ -189,10 +205,12 @@ def main():
         global isTimerStarted
         global shouldRunAttendance
         dt = datetime.now()
-        currentPeriodSLot = "0900"  # add later dt.strftime("%H00")
+        currentPeriodSLot = dt.strftime("%H00")
         if currentTimeTable[currentPeriodSLot] != None:
             if not isPeriodDone[currentPeriodSLot]:
                 if not isTimerStarted:
+                    global cmsIDList
+                    cmsIDList = []
                     attendenceTimeThread.start()
                     isPeriodDone[currentPeriodSLot] = 1
                     isTimerStarted = True
