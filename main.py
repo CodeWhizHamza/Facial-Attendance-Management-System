@@ -5,6 +5,7 @@ from PIL import Image
 import add_student
 import attendance
 import student_list
+from getTotalAttendanceReport import getReport
 
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("green")
@@ -40,7 +41,7 @@ buttonsFrame = ctk.CTkFrame(master=window, bg_color="transparent")
 buttonsFrame.pack(padx=210, pady=0, fill=tk.X)
 
 getAttendanceReportButton = ctk.CTkButton(
-    master=buttonsFrame, text="Get attendance report", width=250, font=font)
+    master=buttonsFrame, text="Get attendance report", width=250, font=font, command=getReport)
 getAttendanceReportButton.grid(**buttonProperties)
 
 addStudentButton = ctk.CTkButton(
