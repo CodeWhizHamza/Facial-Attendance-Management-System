@@ -11,13 +11,13 @@ from helper import printTable
 
 def main():
 
-    root = tk.Tk()
-    root.title("Student details")
-    root.geometry('720x480')
+    window = tk.Tk()
+    window.title("Student details")
+    window.geometry('720x480')
 
     studentDetails = tk.Variable()
 
-    heading = tk.Label(master=root, text="Student Details",
+    heading = tk.Label(master=window, text="Student Details",
                        font='Arial 24 roman normal')
     heading.pack(pady=18)
 
@@ -25,28 +25,29 @@ def main():
         item = table.selection()
         studentDetails.set(table.item(item)['values'])
 
-    def editStudentDetails():
+    def studentSelected():
         if not studentDetails.get():
-            print("No student selected.")
+            tk.messagebox.showinfo("Info", "No student selected.")
+            return False
         else:
+            return True
+
+    def editStudentDetails():
+        if studentSelected():
             editStudent(studentDetails.get()[0], table)
 
     def deleteStudentDetails():
-        if not studentDetails.get():
-            print("No student selected.")
-
-        deleteStudent(studentDetails.get()[0], table)
+        if studentSelected():
+            deleteStudent(studentDetails.get()[0], table)
 
     def getStudentReport():
-        if not studentDetails.get():
-            print("No student selected.")
-        else:
-            studentReport(studentDetails.get()[0], table)
+        if studentSelected():
+            studentReport(studentDetails.get()[0])
 
-    table = ttk.Treeview(root)
+    table = ttk.Treeview(window)
 
     scrollbar = ttk.Scrollbar(
-        master=root, orient='vertical', command=table.yview)
+        master=window, orient='vertical', command=table.yview)
     scrollbar.place(relx=0.835, rely=0.16, relheight=0.475, relwidth=0.020)
 
     table.configure(yscrollcommand=scrollbar.set)
@@ -71,7 +72,7 @@ def main():
     printTable(table)
     table.pack()
 
-    buttonsFrame = tk.Frame(root)
+    buttonsFrame = tk.Frame(window)
     buttonsFrame.pack(pady=24)
 
     editButton = ttk.Button(master=buttonsFrame,
@@ -85,9 +86,4 @@ def main():
     editButton.grid(column=1, row=0, padx=8)
     deleteButton.grid(column=2, row=0)
 
-    root.mainloop()
-
-
-# temporary
-if __name__ == "__main__":
-    main()
+    window.mainloop()
