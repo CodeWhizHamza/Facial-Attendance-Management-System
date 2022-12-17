@@ -93,7 +93,7 @@ def main():
         isPeriodDone["1600"] = 0
 
     # Getting a video capture object for the camera
-    capture = cv.VideoCapture(1)
+    capture = cv.VideoCapture(0)
     capture.set(cv.CAP_PROP_FRAME_WIDTH, 720)  # Width and
     capture.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
 
