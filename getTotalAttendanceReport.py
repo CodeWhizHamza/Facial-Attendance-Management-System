@@ -25,6 +25,6 @@ def getReport():
     writer = pd.ExcelWriter(filename)
     for id in ids:
         attendanceTable = getAttendanceTableFor(id)
-        attendanceTable.to_excel(writer, sheet_name=f'{id}')
+        attendanceTable.to_excel(writer, sheet_name=f'{id}', index=False)
 
     writer.close()

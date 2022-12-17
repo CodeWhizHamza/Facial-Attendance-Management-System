@@ -161,7 +161,7 @@ def getAttendanceTableFor(id: str) -> pd.DataFrame:
     """
     db = sqlite3.connect(databaseName)
     cur = db.cursor()
-    tableOfAttendance = []
+    tableOfAttendance = {}
 
     timeTableWeekDays = timeTable.to_dict('tight')['index']
     timeTableTimes = timeTable.to_dict('tight')['columns']
@@ -182,23 +182,24 @@ def getAttendanceTableFor(id: str) -> pd.DataFrame:
         for time in times:
             if len(time) == 3:
                 times[times.index(time)] = '0' + time
+        for date in dates:
+            if tableOfAttendance.get(date) is None:
+                tableOfAttendance[date] = ['-'] * len(timeTableTimes)
 
         for date in dates:
-            record = [date] + ["-"] * len(timeTableTimes)
+
             for time, attendance in zip(times, attendances):
                 weekDayIndex = timeTableWeekDays.index(getWeekDay(date))
                 timeIndex = timeTableTimes.index(time)
+                tableOfAttendance[date][timeIndex] = f"{timeTableClasses[weekDayIndex][timeIndex]}: {attendance}"
 
-                record[timeIndex +
-                       1] = f"{timeTableClasses[weekDayIndex][timeIndex]}: {attendance}"
-            tableOfAttendance.append(record)
+    tableOfAttendance = [[key, *value]
+                         for key, value in tableOfAttendance.items()]
 
     cur.close()
     db.close()
-
     attendanceDataFrame = pd.DataFrame(tableOfAttendance,
                                        columns=(['Date'] + timeTableTimes))
-
     return attendanceDataFrame
 
 
