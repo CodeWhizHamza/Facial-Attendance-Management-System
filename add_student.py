@@ -18,6 +18,7 @@ def main():
     window.title("Add student")
     window.geometry('720x480')
     window.iconbitmap('resources/logo.ico')
+    window.resizable(width=False, height=False)
 
     font24 = ctk.CTkFont('Arial', 24)
     font16 = ctk.CTkFont('Arial', 16)

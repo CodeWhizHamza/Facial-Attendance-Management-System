@@ -1,6 +1,6 @@
 from tkinter import ttk
 import tkinter as tk
-import sqlite3
+import customtkinter as ctk
 from config import *
 
 from edit_student_details import editStudent
@@ -11,14 +11,21 @@ from helper import printTable
 
 def main():
 
-    window = tk.Tk()
+    window = ctk.CTk()
     window.title("Student details")
     window.geometry('720x480')
+    window.iconbitmap('resources/logo.ico')
+    window.resizable(width=False, height=False)
+
+    ctk.set_appearance_mode("System")
+    ctk.set_default_color_theme("green")
+
+    font24 = ctk.CTkFont('Arial', size=24)
 
     studentDetails = tk.Variable()
 
-    heading = tk.Label(master=window, text="Student Details",
-                       font='Arial 24 roman normal')
+    heading = ctk.CTkLabel(master=window, text="Student Details",
+                           font=font24)
     heading.pack(pady=18)
 
     def selectRecord(item):
@@ -33,25 +40,29 @@ def main():
             return True
 
     def editStudentDetails():
+        studentId = studentDetails.get()[0]
         if studentSelected():
-            editStudent(studentDetails.get()[0], table)
+            editStudent(studentId, table)
 
     def deleteStudentDetails():
+        studentId = studentDetails.get()[0]
         if studentSelected():
-            deleteStudent(studentDetails.get()[0], table)
+            deleteStudent(studentId, table)
 
     def getStudentReport():
+        studentId = studentDetails.get()[0]
         if studentSelected():
-            studentReport(studentDetails.get()[0])
+            studentReport(studentId)
 
-    table = ttk.Treeview(window)
+    tableFrame = ctk.CTkFrame(window)
+    tableFrame.pack(padx=80, fill=tk.X)
 
+    table = ttk.Treeview(tableFrame, selectmode='extended')
     scrollbar = ttk.Scrollbar(
         master=window, orient='vertical', command=table.yview)
-    scrollbar.place(relx=0.835, rely=0.16, relheight=0.475, relwidth=0.020)
+    scrollbar.place(relx=0.98, rely=0.12, relheight=0.470, relwidth=0.020)
 
     table.configure(yscrollcommand=scrollbar.set)
-
     table.bind('<ButtonRelease-1>', selectRecord)
 
     table['columns'] = ('CMS ID', 'Name', 'Semester',
@@ -59,7 +70,7 @@ def main():
 
     table.column("#0", width=0, stretch=tk.NO)
     table.column("CMS ID", anchor=tk.CENTER, width=120)
-    table.column("Name", anchor=tk.W, width=120)
+    table.column("Name", anchor=tk.W, width=300)
     table.column("Semester", anchor=tk.CENTER, width=80)
     table.column("Average attendance", anchor=tk.CENTER, width=160)
 
@@ -70,16 +81,17 @@ def main():
     table.heading('Average attendance', text="Average attendance")
 
     printTable(table)
-    table.pack()
+    table.pack(pady=20)
 
-    buttonsFrame = tk.Frame(window)
+    buttonsFrame = ctk.CTkFrame(
+        window, bg_color='transparent', fg_color='transparent')
     buttonsFrame.pack(pady=24)
 
-    editButton = ttk.Button(master=buttonsFrame,
-                            text="Edit student", command=editStudentDetails)
-    deleteButton = ttk.Button(
+    editButton = ctk.CTkButton(master=buttonsFrame,
+                               text="Edit student", command=editStudentDetails)
+    deleteButton = ctk.CTkButton(
         master=buttonsFrame, text="Delete student", command=deleteStudentDetails)
-    getReportsButton = ttk.Button(
+    getReportsButton = ctk.CTkButton(
         master=buttonsFrame, text="Get student report", command=getStudentReport)
 
     getReportsButton.grid(column=0, row=0)
@@ -87,3 +99,7 @@ def main():
     deleteButton.grid(column=2, row=0)
 
     window.mainloop()
+
+
+if __name__ == "__main__":
+    main()
