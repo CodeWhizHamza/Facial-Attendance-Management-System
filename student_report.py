@@ -1,8 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
 import sqlite3
+import csv
 
 from config import *
+from helper import getAttendancePercentageFor, getAttendanceTableFor
+from tkinter.filedialog import asksaveasfile
 
 
 def studentReport(id, table):
@@ -26,6 +29,15 @@ def studentReport(id, table):
         studentSemester.set(semester)
 
         cursor.close()
+
+    def downloadReport():
+        files = [('Excel files', '*.xlsx'), ('All files', '*.*')]
+        attendanceReport = getAttendanceTableFor(id)
+        filename = asksaveasfile(
+            filetypes=files, defaultextension=files, initialfile=f'{id}')
+        if filename:
+            attendanceReport.to_excel(filename.name, index=False)
+
     loadData()
     heading = tk.Label(master=window, text=f"{studentName.get()}'s Attendance Report",
                        font='Arial 20 roman normal')
@@ -33,11 +45,11 @@ def studentReport(id, table):
     reportFrame = tk.Frame(master=window)
     reportFrame.pack()
     for index, course in enumerate(list(courses)):
-        a = tk.Label(master=reportFrame, text=f"{course}:", font=(
+        tk.Label(master=reportFrame, text=f"{course}:", font=(
             "Arial, 16")).grid(row=index, column=0, sticky=tk.E, padx=8)
-        b = tk.Label(master=reportFrame, text="80%", font=(
+        tk.Label(master=reportFrame, text=f'{getAttendancePercentageFor(id, course)}%', font=(
             "Arial, 16")).grid(row=index, column=1, sticky=tk.W, padx=8)
     detailsButton = ttk.Button(
-        master=window, text="Download detailed report")
-    detailsButton.place(relx=0.75, rely=0.90)
+        master=window, text="Download detailed report", command=downloadReport)
+    detailsButton.place(relx=0.15, rely=0.90)
     window.mainloop()
