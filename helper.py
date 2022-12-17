@@ -10,6 +10,7 @@ def printTable(table):
 
     cur.execute(f"SELECT * FROM {tableName}")
     data = cur.fetchall()
+    data.sort(key=lambda d: d[1].upper())
     for id, name, semester in data:
         percentageSum = 0
         for course in courses:
