@@ -124,6 +124,9 @@ def main():
 
     knownEncodings = getKnownEncodings()
 
+    time = datetime.now()
+    currentClassTime = time.strftime("%H00")
+
     def mainLoop() -> None:
         global isTimerStarted
         global attendanceShouldRun
@@ -178,8 +181,11 @@ def main():
         addStateToJSON('attendanceVariables.json', todayClassesRecord)
         capture.release()
         endAttendance()
-
-    cameraFeedContainer = tk.Canvas(window, width=720, height=480)
+    currentClassName = currentTimeTable[currentClassTime] if currentTimeTable[currentClassTime] else "No class"
+    currentClassLabel = tk.Label(
+        window, text=f"Current Class: {currentClassName}", font="Arial 20")
+    currentClassLabel.pack()
+    cameraFeedContainer = tk.Canvas(window, width=720, height=440)
     cameraFeedContainer.pack()
 
     terminateButton = ctk.CTkButton(
