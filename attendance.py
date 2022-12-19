@@ -105,7 +105,7 @@ def main():
 
     def getCMSIdFor(encoding):
         matches = face_recognition.compare_faces(
-            knownEncodings.tolist(), encoding, tolerance=0.435)
+            knownEncodings.tolist(), encoding, tolerance=0.44)
         if True not in matches:
             return None
 

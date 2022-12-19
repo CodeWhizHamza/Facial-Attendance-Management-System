@@ -165,7 +165,7 @@ def main():
 
         # Check if the CMS ID is unique
         if not isIdUnique(cursor, studentCmsID):
-            showMessage("This Id already exists.")
+            showMessage("Student already exists.")
             cursor.close()
             db.close()
             return
