@@ -130,8 +130,6 @@ def main():
     def mainLoop() -> None:
         global isTimerStarted
         global attendanceShouldRun
-        time = datetime.now()
-        currentClassTime = time.strftime("%H00")
 
         if currentTimeTable[currentClassTime] is None:
             frame = getFrameInRGB(capture)
