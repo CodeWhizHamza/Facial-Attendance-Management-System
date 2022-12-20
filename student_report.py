@@ -1,7 +1,4 @@
 import tkinter as tk
-from tkinter import ttk
-import sqlite3
-import csv
 import customtkinter as ctk
 
 from config import *
@@ -9,7 +6,7 @@ from helper import getAttendancePercentageFor, downloadReport, loadName
 
 
 def studentReport(id):
-    window = tk.Tk()
+    window = ctk.CTkToplevel()
     window.title("Student Report")
     window.geometry('720x480')
     window.iconbitmap('resources/logo.ico')

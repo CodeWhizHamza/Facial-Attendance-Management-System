@@ -2,7 +2,6 @@ import tkinter as tk
 import customtkinter as ctk
 import cv2 as cv
 import face_recognition
-from tkinter import ttk
 from datetime import datetime
 import calendar
 import threading as th
@@ -12,7 +11,6 @@ from PIL import Image, ImageTk
 from config import *
 from helper import *
 
-# TODO: if you can declare them inside the main loop of tkinter, remove all the global things.
 isTimerStarted = False
 attendanceShouldRun = False
 SECONDS_IN_MINUTE = 60
@@ -20,7 +18,8 @@ cmsIDList = []
 
 
 def main():
-    window = tk.Tk()
+    window = ctk.CTkToplevel()
+    window.grab_set()
     window.title("Start Attendance")
     window.geometry('720x520')
     ctk.set_appearance_mode("System")

@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+import customtkinter as ctk
 import cv2 as cv
 import face_recognition
 import sqlite3
@@ -11,7 +12,7 @@ from helper import printTable
 
 
 def editStudent(id, table):
-    window = tk.Tk()
+    window = ctk.CTkToplevel()
     window.title("Edit student")
     window.geometry('600x400')
 

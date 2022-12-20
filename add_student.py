@@ -14,7 +14,8 @@ ctk.set_default_color_theme("green")
 
 
 def main():
-    window = ctk.CTk()
+    window = ctk.CTkToplevel()
+    window.grab_set()
     window.title("Add student")
     window.geometry('720x480')
     window.iconbitmap('resources/logo.ico')
@@ -208,25 +209,26 @@ def main():
         window, font=font14, text=None, text_color="#ff0550")
     message.pack()
 
-    entriesFrame = ctk.CTkFrame(window)
+    entriesFrame = ctk.CTkFrame(master=window)
     entriesFrame.pack()
 
     # Printing name input
-    nameLabel = ctk.CTkLabel(entriesFrame, text="Name: ", font=font16)
-    nameEntry = ctk.CTkEntry(entriesFrame, font=font16, width=220)
+    nameLabel = ctk.CTkLabel(master=entriesFrame, text="Name: ", font=font16)
+    nameEntry = ctk.CTkEntry(master=entriesFrame, font=font16, width=220)
     nameLabel.grid(column=0, row=0, padx=16, sticky=tk.W)
     nameEntry.grid(column=1, row=0, pady=12, padx=24)
 
     # Printing CMS ID input
-    cmsIdLabel = ctk.CTkLabel(entriesFrame, text="CMS ID: ", font=font16)
-    cmsIdEntry = ctk.CTkEntry(entriesFrame, font=font16, width=220)
+    cmsIdLabel = ctk.CTkLabel(
+        master=entriesFrame, text="CMS ID: ", font=font16)
+    cmsIdEntry = ctk.CTkEntry(master=entriesFrame, font=font16, width=220)
     cmsIdLabel.grid(column=0, row=1, padx=16, sticky=tk.W)
     cmsIdEntry.grid(column=1, row=1, padx=24)
 
     # Printing the semester input
-    semesterLabel = ctk.CTkLabel(entriesFrame, text="Semester: ",
+    semesterLabel = ctk.CTkLabel(master=entriesFrame, text="Semester: ",
                                  font=font16)
-    semesterEntry = ctk.CTkEntry(entriesFrame, font=font16, width=220)
+    semesterEntry = ctk.CTkEntry(master=entriesFrame, font=font16, width=220)
     semesterLabel.grid(column=0, row=2, padx=16, sticky=tk.W)
     semesterEntry.grid(column=1, row=2, pady=12, padx=24)
 
@@ -237,7 +239,7 @@ def main():
 
     # Printing Buttons
     cancelButton = ctk.CTkButton(
-        entriesFrame, text="Cancel", command=lambda: window.destroy())
+        master=entriesFrame, text="Cancel", command=lambda: window.destroy())
     saveButton = ctk.CTkButton(entriesFrame, text="Save",
                                command=saveData)
 

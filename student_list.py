@@ -10,8 +10,7 @@ from helper import printTable
 
 
 def main():
-
-    window = ctk.CTk()
+    window = ctk.CTkToplevel()
     window.title("Student details")
     window.geometry('720x480')
     window.iconbitmap('resources/logo.ico')
