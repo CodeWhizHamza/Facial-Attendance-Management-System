@@ -18,6 +18,11 @@ def deleteStudent(id, table):
         cursor.execute(query)
         db.commit()
 
+        for course in courses:
+            query = f"ALTER TABLE {course} DROP COLUMN `{id}`;"
+            cursor.execute(query)
+            db.commit()
+
         cursor.close()
         db.close()
 
