@@ -13,13 +13,7 @@ ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("green")
 
 
-def main():
-    window = ctk.CTkToplevel()
-    window.grab_set()
-    window.title("Add student")
-    window.geometry('720x480')
-    window.iconbitmap('resources/logo.ico')
-    window.resizable(width=False, height=False)
+def main(rightFrame):
 
     font24 = ctk.CTkFont('Arial', 24)
     font16 = ctk.CTkFont('Arial', 16)
@@ -198,7 +192,7 @@ def main():
         createTablesIfNotExists()
         addNewColumnToEachCourseTable(studentCmsID)
 
-    titleFrame = ctk.CTkFrame(master=window)
+    titleFrame = ctk.CTkFrame(master=rightFrame)
     titleFrame.pack(pady=24)
     title = ctk.CTkLabel(
         master=titleFrame, text="Add students", font=font24)
@@ -206,10 +200,10 @@ def main():
 
     messageStr = tk.StringVar()
     message = ctk.CTkLabel(
-        window, font=font14, text=None, text_color="#ff0550")
+        rightFrame, font=font14, text=None, text_color="#ff0550")
     message.pack()
 
-    entriesFrame = ctk.CTkFrame(master=window)
+    entriesFrame = ctk.CTkFrame(master=rightFrame)
     entriesFrame.pack()
 
     # Printing name input
@@ -238,15 +232,10 @@ def main():
     takeImageButton.grid(column=1, row=3, pady=10, padx=24, sticky=tk.W)
 
     # Printing Buttons
-    cancelButton = ctk.CTkButton(
-        master=entriesFrame, text="Cancel", command=lambda: window.destroy())
     saveButton = ctk.CTkButton(entriesFrame, text="Save",
                                command=saveData)
 
     saveButton.grid(column=1, row=4, sticky=tk.W, padx=24)
-    cancelButton.grid(column=1, row=5, sticky=tk.W, pady=8, padx=24)
-
-    window.mainloop()
 
 
 if __name__ == "__main__":

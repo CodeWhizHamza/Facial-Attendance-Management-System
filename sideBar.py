@@ -2,17 +2,13 @@ import tkinter as tk
 import customtkinter as ctk
 from PIL import Image
 
-import add_student
-import attendance
-import student_list
+
 from getTotalAttendanceReport import getReport
-# from content import showContent
+from content import showContent
 
 
 def showSidebar(root_window, active_button):
-
     font = ctk.CTkFont(family="Arial", size=20)
-    font16 = ctk.CTkFont(family="Arial", size=16)
 
     # clear content of root window
     for widget in root_window.winfo_children():
@@ -102,4 +98,4 @@ def showSidebar(root_window, active_button):
         master=leftButtonsFrame, bg_color="transparent", fg_color="transparent")
     emptyFrame.pack(fill=tk.Y, expand=True, before=getAttendanceReportButton)
 
-    # showContent(root_window, active_button)
+    showContent(root_window, active_button)

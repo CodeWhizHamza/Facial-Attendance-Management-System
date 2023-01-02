@@ -14,14 +14,10 @@ window.minsize(1280, 720)
 window.iconbitmap('resources/logo.ico')
 window.config(bg='#ffffff')
 
-font = ctk.CTkFont(family="Arial", size=20)
-font16 = ctk.CTkFont(family="Arial", size=16)
+font = ctk.CTkFont(family="Inter", size=20)
+font16 = ctk.CTkFont(family="Inter", size=16)
+fontTitle = ctk.CTkFont(family="Inter", size=64)
 
 showSidebar(window, None)
-
-rightFrame = ctk.CTkFrame(
-    master=window, bg_color="transparent", fg_color="#ffffff", width=960)
-rightFrame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
 
 window.mainloop()
