@@ -6,7 +6,7 @@ from config import *
 from edit_student_details import editStudent
 from delete_student import deleteStudent
 from student_report import studentReport
-from helper import printTable
+from helper import printTable, truncateWidget
 
 
 def main(rightFrame):
@@ -14,8 +14,7 @@ def main(rightFrame):
     font24 = ctk.CTkFont('Arial', 24)
     studentDetails = tk.Variable()
 
-    for widget in rightFrame.winfo_children():
-        widget.destroy()
+    truncateWidget(rightFrame)
 
     emptyFrame = ctk.CTkFrame(
         master=rightFrame, bg_color="transparent", fg_color="transparent", height=120)
@@ -53,7 +52,7 @@ def main(rightFrame):
     def getStudentReport():
         if studentSelected():
             studentId = studentDetails.get()[0]
-            studentReport(studentId)
+            studentReport(studentId, rightFrame)
 
     tableFrame = ctk.CTkFrame(
         master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=640)

@@ -17,7 +17,7 @@ SECONDS_IN_MINUTE = 60
 cmsIDList = []
 
 
-def main():
+def main(rightFrame):
     window = ctk.CTkToplevel()
     window.grab_set()
     window.title("Start Attendance")

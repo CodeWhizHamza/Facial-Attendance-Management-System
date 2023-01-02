@@ -3,8 +3,9 @@ import customtkinter as ctk
 from PIL import Image
 
 import add_student
-import attendance
 import student_list
+import verify_admin
+from helper import truncateWidget
 
 
 def showContent(root_window, active_button):
@@ -18,7 +19,7 @@ def showContent(root_window, active_button):
     elif active_button == 'showAllStudentsButton':
         student_list.main(rightFrame)
     elif active_button == 'initializeSystem':
-        attendance.main(rightFrame)
+        verify_admin.isAdmin(rightFrame)
 
     if active_button is not None:
         return

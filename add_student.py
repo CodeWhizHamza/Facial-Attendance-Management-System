@@ -7,7 +7,7 @@ import csv
 import os
 import customtkinter as ctk
 from config import *
-from helper import showMessage
+from helper import showMessage, truncateWidget
 from tkinter.messagebox import showinfo
 import student_list
 
@@ -16,6 +16,8 @@ def main(rightFrame):
     font40 = ctk.CTkFont('Arial', 40)
     font24 = ctk.CTkFont('Arial', 24)
     faceEncodings = tk.Variable()
+
+    truncateWidget(rightFrame)
 
     def takeImage():
         capture = cv.VideoCapture(0)

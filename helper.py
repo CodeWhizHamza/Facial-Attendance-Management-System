@@ -247,3 +247,8 @@ def getKnownEncodings():
 
 def showMessage(text):
     showwarning("Warning", text)
+
+
+def truncateWidget(widget):
+    for child in widget.winfo_children():
+        child.destroy()

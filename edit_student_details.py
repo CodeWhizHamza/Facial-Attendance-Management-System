@@ -8,7 +8,7 @@ import csv
 import os
 
 from config import *
-from helper import showMessage
+from helper import showMessage, truncateWidget
 from tkinter.messagebox import showinfo
 import student_list
 
@@ -150,8 +150,7 @@ def editStudent(id, rightFrame):
         showinfo("Success", "Student data updated successfully.")
         student_list.main(rightFrame)
 
-    for widget in rightFrame.winfo_children():
-        widget.destroy()
+    truncateWidget(rightFrame)
 
     emptyFrame = ctk.CTkFrame(
         master=rightFrame, bg_color="transparent", fg_color="transparent", height=120)
