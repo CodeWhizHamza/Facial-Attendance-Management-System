@@ -9,24 +9,22 @@ from student_report import studentReport
 from helper import printTable
 
 
-def main():
-    window = ctk.CTkToplevel()
-    window.title("Student details")
-    window.geometry('720x480')
-    window.iconbitmap('resources/logo.ico')
-    window.resizable(width=False, height=False)
-    window.focus()
-
-    ctk.set_appearance_mode("System")
-    ctk.set_default_color_theme("green")
-
-    font24 = ctk.CTkFont('Arial', size=24)
-
+def main(rightFrame):
+    font40 = ctk.CTkFont('Arial', 40)
+    font24 = ctk.CTkFont('Arial', 24)
     studentDetails = tk.Variable()
 
-    heading = ctk.CTkLabel(master=window, text="Student Details",
-                           font=font24)
-    heading.pack(pady=18)
+    emptyFrame = ctk.CTkFrame(
+        master=rightFrame, bg_color="transparent", fg_color="transparent", height=120)
+    emptyFrame.pack(side=tk.TOP, fill=tk.X)
+
+    rightHeaderFrame = ctk.CTkFrame(
+        master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=80)
+    rightHeaderFrame.pack(side=tk.TOP, fill=tk.X)
+
+    rightHeaderLabel = tk.Label(
+        master=rightHeaderFrame, text="Student details", font=font40, bg="#ffffff", fg="#333333", justify='left', anchor='w', wraplength=960)
+    rightHeaderLabel.pack(fill=tk.X, side=tk.LEFT, padx=80)
 
     def selectRecord(item):
         item = table.selection()
@@ -54,16 +52,20 @@ def main():
             studentId = studentDetails.get()[0]
             studentReport(studentId)
 
-    tableFrame = ctk.CTkFrame(window)
-    tableFrame.pack(padx=80, fill=tk.X)
+    tableFrame = ctk.CTkFrame(
+        master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=640)
+    tableFrame.pack(side=tk.TOP, fill=tk.X, padx=80, pady=64, anchor=tk.W)
 
-    table = ttk.Treeview(tableFrame, selectmode='extended')
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=font24)
+    style.configure("Treeview", font=font24, rowheight=32, width=900)
+    table = ttk.Treeview(tableFrame, selectmode='browse', show='headings')
     scrollbar = ttk.Scrollbar(
-        master=window, orient='vertical', command=table.yview)
+        master=rightFrame, orient='vertical', command=table.yview)
     scrollbar.place(relx=0.98, rely=0.12, relheight=0.470, relwidth=0.020)
 
     table.configure(yscrollcommand=scrollbar.set)
-    table.bind('<ButtonRelease-1>', selectRecord)
+    table.bind('<<TreeviewSelect>>', selectRecord)
 
     table['columns'] = ('CMS ID', 'Name', 'Semester',
                         'Average attendance')
@@ -81,24 +83,19 @@ def main():
     table.heading('Average attendance', text="Average attendance")
 
     printTable(table)
-    table.pack(pady=20)
+    table.pack(side=tk.TOP, fill=tk.X)
 
-    buttonsFrame = ctk.CTkFrame(
-        window, bg_color='transparent', fg_color='transparent')
-    buttonsFrame.pack(pady=24)
-
-    editButton = ctk.CTkButton(master=buttonsFrame,
-                               text="Edit student", command=editStudentDetails)
-    deleteButton = ctk.CTkButton(
-        master=buttonsFrame, text="Delete student", command=deleteStudentDetails)
-    getReportsButton = ctk.CTkButton(
-        master=buttonsFrame, text="Get student report", command=getStudentReport)
-
-    getReportsButton.grid(column=0, row=0)
-    editButton.grid(column=1, row=0, padx=8)
-    deleteButton.grid(column=2, row=0)
-
-    window.mainloop()
+    editButton = tk.Button(master=rightFrame, text="Edit student",
+                           font=font24, command=editStudentDetails, bg="#6FFD9D", fg="#333333", activebackground="#62E48C", activeforeground="#333333", bd=0, highlightthickness=0, relief=tk.FLAT, padx=32, pady=12)
+    deleteButton = tk.Button(master=rightFrame, text="Delete student",
+                             font=font24, command=deleteStudentDetails, bg="#FF6F6F", fg="#333333", activebackground="#E46262", activeforeground="#333333", bd=0, highlightthickness=0, relief=tk.FLAT, padx=32, pady=12)
+    getReportsButton = tk.Button(master=rightFrame, text="Get student report",
+                                 font=font24, command=getStudentReport, bg="#6F6FFF", fg="#ffffff", activebackground="#6262E4", activeforeground="#ffffff", bd=0, highlightthickness=0, relief=tk.FLAT, padx=32, pady=12)
+    tk.Label(master=rightFrame, text="", bg="#ffffff", fg="#ffffff").pack(
+        side=tk.LEFT, padx=40)
+    editButton.pack(side=tk.LEFT, pady=16)
+    deleteButton.pack(side=tk.LEFT, padx=32, pady=16)
+    getReportsButton.pack(side=tk.LEFT, pady=16)
 
 
 if __name__ == "__main__":
