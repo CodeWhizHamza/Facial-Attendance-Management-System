@@ -8,11 +8,7 @@ import os
 from tkinter.messagebox import showwarning
 import customtkinter as ctk
 from PIL import Image
-
 from config import *
-
-ctk.set_appearance_mode("System")
-ctk.set_default_color_theme("green")
 
 
 def main(rightFrame):
