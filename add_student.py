@@ -5,7 +5,9 @@ import face_recognition
 import sqlite3
 import csv
 import os
+from tkinter.messagebox import showwarning
 import customtkinter as ctk
+from PIL import Image
 
 from config import *
 
@@ -15,6 +17,7 @@ ctk.set_default_color_theme("green")
 
 def main(rightFrame):
 
+    font40 = ctk.CTkFont('Arial', 40)
     font24 = ctk.CTkFont('Arial', 24)
     font16 = ctk.CTkFont('Arial', 16)
     font14 = ctk.CTkFont('Arial', 14)
@@ -22,8 +25,7 @@ def main(rightFrame):
     faceEncodings = tk.Variable()
 
     def showMessage(text):
-        messageStr.set(text)
-        message.configure(text=messageStr.get())
+        showwarning("Warning", text)
 
     def takeImage():
         capture = cv.VideoCapture(0)
@@ -41,14 +43,10 @@ def main(rightFrame):
         if len(faces) == 0:
             showMessage("No face detected.")
             return
-        else:
-            showMessage("")
 
         if len(faces) > 1:
             showMessage("Multiple faces detected.")
             return
-        else:
-            showMessage("")
 
         face = faces[0]
         cv.rectangle(frame, (face[3], face[0]),
@@ -68,8 +66,6 @@ def main(rightFrame):
         if len(studentName) == 0:
             showMessage("Please enter a valid name")
             return False
-        else:
-            showMessage("")
 
         try:
             studentCmsID = int(studentCmsID)
@@ -80,8 +76,6 @@ def main(rightFrame):
         if len(studentSemester) == 0:
             showMessage("Please enter a valid semester number")
             return False
-        else:
-            showMessage("")
 
         try:
             studentSemester = int(studentSemester)
@@ -92,8 +86,6 @@ def main(rightFrame):
         if not faceEncodings.get():
             showMessage("Please provide an image.")
             return False
-        else:
-            showMessage("")
 
         return True
 
@@ -192,51 +184,50 @@ def main(rightFrame):
         createTablesIfNotExists()
         addNewColumnToEachCourseTable(studentCmsID)
 
-    titleFrame = ctk.CTkFrame(master=rightFrame)
-    titleFrame.pack(pady=24)
-    title = ctk.CTkLabel(
-        master=titleFrame, text="Add students", font=font24)
-    title.pack(pady=16, padx=48)
+    emptyFrame = ctk.CTkFrame(
+        master=rightFrame, bg_color="transparent", fg_color="transparent", height=120)
+    emptyFrame.pack(side=tk.TOP, fill=tk.X)
 
-    messageStr = tk.StringVar()
-    message = ctk.CTkLabel(
-        rightFrame, font=font14, text=None, text_color="#ff0550")
-    message.pack()
+    rightHeaderFrame = ctk.CTkFrame(
+        master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=80)
+    rightHeaderFrame.pack(side=tk.TOP, fill=tk.X)
 
-    entriesFrame = ctk.CTkFrame(master=rightFrame)
-    entriesFrame.pack()
+    rightHeaderLabel = tk.Label(
+        master=rightHeaderFrame, text="Add Student", font=font40, bg="#ffffff", fg="#333333", justify='left', anchor='w', wraplength=960)
+    rightHeaderLabel.pack(fill=tk.X, side=tk.LEFT, padx=80)
+
+    entriesFrame = ctk.CTkFrame(
+        master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=400)
+    entriesFrame.pack(side=tk.TOP, fill=tk.X, padx=80, pady=64)
 
     # Printing name input
-    nameLabel = ctk.CTkLabel(master=entriesFrame, text="Name: ", font=font16)
-    nameEntry = ctk.CTkEntry(master=entriesFrame, font=font16, width=220)
-    nameLabel.grid(column=0, row=0, padx=16, sticky=tk.W)
-    nameEntry.grid(column=1, row=0, pady=12, padx=24)
+    nameLabel = ctk.CTkLabel(master=entriesFrame, text="Name: ", font=font24)
+    nameEntry = ctk.CTkEntry(master=entriesFrame, font=font24, width=300)
+    nameLabel.grid(column=0, row=0, sticky=tk.W)
+    nameEntry.grid(column=1, row=0, padx=24)
 
     # Printing CMS ID input
     cmsIdLabel = ctk.CTkLabel(
-        master=entriesFrame, text="CMS ID: ", font=font16)
-    cmsIdEntry = ctk.CTkEntry(master=entriesFrame, font=font16, width=220)
-    cmsIdLabel.grid(column=0, row=1, padx=16, sticky=tk.W)
-    cmsIdEntry.grid(column=1, row=1, padx=24)
+        master=entriesFrame, text="CMS ID: ", font=font24)
+    cmsIdEntry = ctk.CTkEntry(master=entriesFrame, font=font24, width=300)
+    cmsIdLabel.grid(column=0, row=1, sticky=tk.W)
+    cmsIdEntry.grid(column=1, row=1, padx=24, pady=24)
 
     # Printing the semester input
     semesterLabel = ctk.CTkLabel(master=entriesFrame, text="Semester: ",
-                                 font=font16)
-    semesterEntry = ctk.CTkEntry(master=entriesFrame, font=font16, width=220)
-    semesterLabel.grid(column=0, row=2, padx=16, sticky=tk.W)
-    semesterEntry.grid(column=1, row=2, pady=12, padx=24)
+                                 font=font24)
+    semesterEntry = ctk.CTkEntry(master=entriesFrame, font=font24, width=300)
+    semesterLabel.grid(column=0, row=2, sticky=tk.W)
+    semesterEntry.grid(column=1, row=2, padx=24)
 
     # Printing take image button
-    takeImageButton = ctk.CTkButton(
-        master=entriesFrame, text="Take image", command=takeImage)
-    takeImageButton.grid(column=1, row=3, pady=10, padx=24, sticky=tk.W)
+    takeImageLabel = ctk.CTkLabel(master=entriesFrame, text="Your image: ",
+                                  font=font24)
+    takeImageButton = tk.Button(master=entriesFrame, text="Take Image",
+                                font=font24, command=takeImage, bg="#6FFD9D", fg="#333333", activebackground="#62E48C", activeforeground="#333333", bd=0, highlightthickness=0, relief=tk.FLAT, padx=24, pady=12)
+    takeImageLabel.grid(column=0, row=3, sticky=tk.W)
+    takeImageButton.grid(column=1, row=3, pady=24, sticky=tk.W, padx=24)
 
-    # Printing Buttons
-    saveButton = ctk.CTkButton(entriesFrame, text="Save",
-                               command=saveData)
-
-    saveButton.grid(column=1, row=4, sticky=tk.W, padx=24)
-
-
-if __name__ == "__main__":
-    main()
+    saveButton = tk.Button(master=rightFrame, text="Save",
+                           font=font24, command=saveData, bg="#6FFD9D", fg="#333333", activebackground="#62E48C", activeforeground="#333333", bd=0, highlightthickness=0, relief=tk.FLAT, padx=64, pady=12)
+    saveButton.pack(side=tk.LEFT, padx=80, pady=0, anchor=tk.W)
