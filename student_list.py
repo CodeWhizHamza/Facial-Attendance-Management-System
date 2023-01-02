@@ -14,6 +14,9 @@ def main(rightFrame):
     font24 = ctk.CTkFont('Arial', 24)
     studentDetails = tk.Variable()
 
+    for widget in rightFrame.winfo_children():
+        widget.destroy()
+
     emptyFrame = ctk.CTkFrame(
         master=rightFrame, bg_color="transparent", fg_color="transparent", height=120)
     emptyFrame.pack(side=tk.TOP, fill=tk.X)
@@ -40,7 +43,7 @@ def main(rightFrame):
     def editStudentDetails():
         if studentSelected():
             studentId = studentDetails.get()[0]
-            editStudent(studentId, table)
+            editStudent(studentId, rightFrame)
 
     def deleteStudentDetails():
         if studentSelected():

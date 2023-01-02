@@ -5,6 +5,7 @@ import calendar
 from config import *
 import sqlite3
 from tkinter.filedialog import asksaveasfile
+from tkinter.messagebox import showwarning
 
 
 def printTable(table):
@@ -242,3 +243,7 @@ def getKnownEncodings():
         knownEncodings[file[:-4]] = getCSV(file)
 
     return knownEncodings
+
+
+def showMessage(text):
+    showwarning("Warning", text)

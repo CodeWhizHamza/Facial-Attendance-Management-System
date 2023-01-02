@@ -5,20 +5,17 @@ import face_recognition
 import sqlite3
 import csv
 import os
-from tkinter.messagebox import showwarning
 import customtkinter as ctk
 from config import *
+from helper import showMessage
+from tkinter.messagebox import showinfo
+import student_list
 
 
 def main(rightFrame):
-
     font40 = ctk.CTkFont('Arial', 40)
     font24 = ctk.CTkFont('Arial', 24)
-
     faceEncodings = tk.Variable()
-
-    def showMessage(text):
-        showwarning("Warning", text)
 
     def takeImage():
         capture = cv.VideoCapture(0)
@@ -173,9 +170,11 @@ def main(rightFrame):
             writer = csv.writer(file)
             writer.writerow(faceEncodings.get().split(','))
 
-        window.destroy()
         createTablesIfNotExists()
         addNewColumnToEachCourseTable(studentCmsID)
+
+        showinfo("Success", "Student added successfully.")
+        student_list.main(rightFrame)
 
     emptyFrame = ctk.CTkFrame(
         master=rightFrame, bg_color="transparent", fg_color="transparent", height=120)

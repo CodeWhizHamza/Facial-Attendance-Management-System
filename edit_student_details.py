@@ -8,18 +8,18 @@ import csv
 import os
 
 from config import *
-from helper import printTable
+from helper import showMessage
+from tkinter.messagebox import showinfo
+import student_list
 
 
-def editStudent(id, table):
-    window = ctk.CTkToplevel()
-    window.title("Edit student")
-    window.geometry('600x400')
-
+def editStudent(id, rightFrame):
     studentId = tk.IntVar()
     studentName = tk.StringVar()
     studentSemester = tk.IntVar()
     faceEncodings = tk.Variable()
+    font40 = ctk.CTkFont('Arial', 40)
+    font24 = ctk.CTkFont('Arial', 24)
 
     def loadStudentData():
         db = sqlite3.connect(databaseName)
@@ -47,11 +47,6 @@ def editStudent(id, table):
             faceEncodings.set(encodings)
 
     loadStudentData()
-    # print(studentId.get())
-
-    def showMessage(text):
-        messageStr.set(text)
-        message.config(text=messageStr.get())
 
     def takeImage():
         capture = cv.VideoCapture(0)
@@ -69,14 +64,10 @@ def editStudent(id, table):
         if len(faces) == 0:
             showMessage("No face detected.")
             return
-        else:
-            showMessage("")
 
         if len(faces) > 1:
             showMessage("Multiple faces detected.")
             return
-        else:
-            showMessage("")
 
         face = faces[0]
         cv.rectangle(frame, (face[3], face[0]),
@@ -85,7 +76,6 @@ def editStudent(id, table):
 
         encodings = face_recognition.face_encodings(frame, [face])[0]
         encodings = [value for value in encodings]
-        # encodingsInString = ",".join(encodingsInString)
         faceEncodings.set(encodings)
 
     def validateUserData():
@@ -96,8 +86,6 @@ def editStudent(id, table):
         if len(studentName) == 0:
             showMessage("Please enter a valid name")
             return False
-        else:
-            showMessage("")
 
         try:
             studentCmsID = int(studentCmsID)
@@ -108,8 +96,6 @@ def editStudent(id, table):
         if len(studentSemester) == 0:
             showMessage("Please enter a valid semester number")
             return False
-        else:
-            showMessage("")
 
         try:
             studentSemester = int(studentSemester)
@@ -120,12 +106,10 @@ def editStudent(id, table):
         if not faceEncodings.get():
             showMessage("Please provide an image.")
             return False
-        else:
-            showMessage("")
 
         return True
 
-    def saveData():
+    def updateData():
         isValid = validateUserData()
         if not isValid:
             return
@@ -163,67 +147,70 @@ def editStudent(id, table):
             writer = csv.writer(file)
             writer.writerow(faceEncodings.get())
 
-        window.destroy()
+        showinfo("Success", "Student data updated successfully.")
+        student_list.main(rightFrame)
 
-        for item in table.get_children():
-            table.delete(item)
-        printTable(table)
-    title = ttk.Label(
-        master=window, text="Update student details", foreground='#333', font='Arial 18 roman bold')
-    title.pack(pady=18)
+    for widget in rightFrame.winfo_children():
+        widget.destroy()
 
-    messageStr = tk.StringVar()
-    message = ttk.Label(
-        window, font="Arial 14 roman normal", foreground="#ff0220")
-    message.pack()
+    emptyFrame = ctk.CTkFrame(
+        master=rightFrame, bg_color="transparent", fg_color="transparent", height=120)
+    emptyFrame.pack(side=tk.TOP, fill=tk.X)
 
-    entriesFrame = ttk.Frame(window)
-    entriesFrame.pack()
+    rightHeaderFrame = ctk.CTkFrame(
+        master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=80)
+    rightHeaderFrame.pack(side=tk.TOP, fill=tk.X)
+
+    rightHeaderLabel = tk.Label(
+        master=rightHeaderFrame, text="Edit Student Details", font=font40, bg="#ffffff", fg="#333333", justify='left', anchor='w', wraplength=960)
+    rightHeaderLabel.pack(fill=tk.X, side=tk.LEFT, padx=80)
+
+    entriesFrame = ctk.CTkFrame(
+        master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=400)
+    entriesFrame.pack(side=tk.TOP, fill=tk.X, padx=80, pady=64)
 
     # Printing name input
-    nameLabel = ttk.Label(entriesFrame, text="Name: ",
-                          foreground='#333', font='Arial 16')
-    nameEntry = ttk.Entry(
-        entriesFrame, font="Arial 16 roman normal")
+    nameLabel = ctk.CTkLabel(master=entriesFrame, text="Name: ", font=font24)
+    nameEntry = ctk.CTkEntry(master=entriesFrame, font=font24, width=300)
+    nameLabel.grid(column=0, row=0, sticky=tk.W)
+    nameEntry.grid(column=1, row=0, padx=24)
+
     nameEntry.delete(0, tk.END)
     nameEntry.insert(0, studentName.get())
 
-    nameLabel.grid(column=0, row=0)
-    nameEntry.grid(column=1, row=0, pady=5)
-
     # Printing CMS ID input
-    cmsIdLabel = ttk.Label(entriesFrame, text="CMS ID: ",
-                           foreground='#333', font='Arial 16')
-    cmsIdEntry = ttk.Entry(
-        entriesFrame, font="Arial 16 roman normal")
+    cmsIdLabel = ctk.CTkLabel(
+        master=entriesFrame, text="CMS ID: ", font=font24)
+    cmsIdEntry = ctk.CTkEntry(master=entriesFrame, font=font24, width=300)
+    cmsIdLabel.grid(column=0, row=1, sticky=tk.W)
+    cmsIdEntry.grid(column=1, row=1, padx=24, pady=24)
 
     cmsIdEntry.delete(0, tk.END)
     cmsIdEntry.insert(0, studentId.get())
-    cmsIdLabel.grid(column=0, row=1)
-    cmsIdEntry.grid(column=1, row=1, pady=5)
 
     # Printing the semester input
-    semesterLabel = ttk.Label(entriesFrame, text="Semester: ",
-                              foreground='#333', font='Arial 16')
-    semesterEntry = ttk.Entry(
-        entriesFrame, font="Arial 16 roman normal")
+    semesterLabel = ctk.CTkLabel(master=entriesFrame, text="Semester: ",
+                                 font=font24)
+    semesterEntry = ctk.CTkEntry(master=entriesFrame, font=font24, width=300)
+    semesterLabel.grid(column=0, row=2, sticky=tk.W)
+    semesterEntry.grid(column=1, row=2, padx=24)
+
     semesterEntry.delete(0, tk.END)
     semesterEntry.insert(0, studentSemester.get())
-    semesterLabel.grid(column=0, row=2)
-    semesterEntry.grid(column=1, row=2, pady=5)
 
     # Printing take image button
-    takeImageButton = ttk.Button(
-        master=entriesFrame, text="Take image", command=takeImage)
-    takeImageButton.grid(column=1, row=3, sticky=tk.W, pady=10)
+    takeImageLabel = ctk.CTkLabel(master=entriesFrame, text="Your image: ",
+                                  font=font24)
+    takeImageButton = tk.Button(master=entriesFrame, text="Take Image",
+                                font=font24, command=takeImage, bg="#6FFD9D", fg="#333333", activebackground="#62E48C", activeforeground="#333333", bd=0, highlightthickness=0, relief=tk.FLAT, padx=24, pady=12)
+    takeImageLabel.grid(column=0, row=3, sticky=tk.W)
+    takeImageButton.grid(column=1, row=3, pady=24, sticky=tk.W, padx=24)
 
-    # Printing Buttons
-    cancelButton = ttk.Button(
-        entriesFrame, text="Cancel", command=lambda: window.destroy())
-    saveButton = ttk.Button(entriesFrame, text="Save",
-                            style='my.TButton', command=saveData)
+    saveButton = tk.Button(master=rightFrame, text="Update",
+                           font=font24, command=updateData, bg="#6FFD9D", fg="#333333", activebackground="#62E48C", activeforeground="#333333", bd=0, highlightthickness=0, relief=tk.FLAT, padx=64, pady=12)
+    saveButton.pack(side=tk.LEFT, padx=80, pady=0, anchor=tk.W)
 
-    saveButton.grid(column=1, row=4, sticky=tk.W)
-    cancelButton.grid(column=1, row=5, sticky=tk.W)
-
-    window.mainloop()
+    # Back button
+    backButton = tk.Button(master=rightFrame, text="Back",
+                           font=font24, command=lambda: student_list.main(rightFrame), bg="#6FFD9D", fg="#333333", activebackground="#62E48C", activeforeground="#333333", bd=0, highlightthickness=0, relief=tk.FLAT, padx=64, pady=12)
+    backButton.place(x=80, y=40)
