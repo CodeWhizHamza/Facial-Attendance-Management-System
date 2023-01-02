@@ -7,7 +7,6 @@ import csv
 import os
 from tkinter.messagebox import showwarning
 import customtkinter as ctk
-from PIL import Image
 from config import *
 
 
@@ -15,8 +14,6 @@ def main(rightFrame):
 
     font40 = ctk.CTkFont('Arial', 40)
     font24 = ctk.CTkFont('Arial', 24)
-    font16 = ctk.CTkFont('Arial', 16)
-    font14 = ctk.CTkFont('Arial', 14)
 
     faceEncodings = tk.Variable()
 
