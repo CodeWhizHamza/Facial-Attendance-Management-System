@@ -1,11 +1,18 @@
 import sqlite3
 from tkinter.filedialog import asksaveasfile
+from tkinter import messagebox
+import os
 
 from helper import getAttendanceTableFor
 from config import *
 
 
 def getReport():
+    if not os.path.exists("./known_encodings.pickle"):
+        messagebox.showwarning(
+            "Warning", "No students found. Please add students and mark their attendance first.")
+        return
+
     db = sqlite3.connect(databaseName)
     cursor = db.cursor()
 
