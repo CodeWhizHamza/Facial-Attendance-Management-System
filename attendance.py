@@ -91,7 +91,7 @@ def main(rightFrame, root_window=None):
             rightFrame, "No known encodings found. Please add students first.", font24, root_window)
         return
 
-    def endAttendance() -> None:
+    def endAttendance(overcomeCondition) -> None:
         global cmsIDList
         dayTime = currentDate.strftime("%d-%m-%Y-%H00")
         if isTimerStarted:
@@ -99,8 +99,10 @@ def main(rightFrame, root_window=None):
                 cmsIDList, currentTimeTable[currentDate.strftime("%H00")], dayTime)
 
         attendanceTimerThread.cancel()
-
-        sideBar.showSidebar(root_window)
+        if overcomeCondition:
+            root_window.destroy()
+        else:
+            sideBar.showSidebar(root_window)
 
     def updateFrame(frame, frameContainer):
         img = Image.fromarray(frame)
@@ -148,7 +150,7 @@ def main(rightFrame, root_window=None):
                 return
         addStateToJSON('attendanceVariables.json', todayClassesRecord)
         capture.release()
-        endAttendance()
+        endAttendance(overcomeCondition)
 
     attendanceDuration = 15 * SECONDS_IN_MINUTE
     attendanceTimerThread = th.Timer(attendanceDuration, endAttendance)
@@ -158,7 +160,7 @@ def main(rightFrame, root_window=None):
 
     if todayClassesRecord[currentClassTime] != 0:
         showMessage(
-            rightFrame, "Attendance has already been marked for this class.", font24)
+            rightFrame, "Attendance has already been marked for this class.", font24, root_window)
         return
 
     currentClassName = None
@@ -205,13 +207,13 @@ def main(rightFrame, root_window=None):
         updateFrame(frame, cameraFeedContainer)
 
     cameraFeedFrame = tk.Frame(rightFrame, width=720, height=440)
-    cameraFeedFrame.pack(side=tk.TOP, padx=80)
+    cameraFeedFrame.pack(side=tk.TOP, padx=80, anchor=tk.W,  pady=24)
     cameraFeedContainer = tk.Canvas(cameraFeedFrame, width=720, height=440)
     cameraFeedContainer.pack(side=tk.LEFT)
 
     endButton = tk.Button(master=rightFrame, text="End attendance",
                           font=font24, command=closeWindow, bg="#6FFD9D", fg="#333333", activebackground="#62E48C", activeforeground="#333333", bd=0, highlightthickness=0, relief=tk.FLAT, padx=64, pady=12)
-    endButton.pack(side=tk.TOP, padx=80)
+    endButton.pack(side=tk.TOP, padx=80, anchor=tk.W)
 
     def startCamera():
         global isEndButtonClicked
