@@ -87,7 +87,7 @@ def showSidebar(root_window, active_button=None):
     showAllStudentsButton.pack(fill=tk.X)
 
     initializeSystem = tk.Button(
-        master=leftButtonsFrame, text="Initialize System", font=font, command=onInitializeSystemButtonPress, borderwidth=0, **buttonsConfig['initializeSystem'])
+        master=leftButtonsFrame, text="Start Attendance", font=font, command=onInitializeSystemButtonPress, borderwidth=0, **buttonsConfig['initializeSystem'])
     initializeSystem.pack(fill=tk.X)
 
     getAttendanceReportButton = tk.Button(
