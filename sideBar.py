@@ -9,25 +9,36 @@ from helper import truncateWidget
 
 
 def showSidebar(root_window, active_button=None):
+    """This function will show the sidebar.
+
+    Args:
+        root_window (tk.Tk): This is the root window.
+        active_button (string, optional): This is the active button. Defaults to None.
+    """
     font = ctk.CTkFont(family="Arial", size=20)
     root_window.protocol("WM_DELETE_WINDOW", lambda: root_window.destroy())
     truncateWidget(root_window)
 
     def onAddStudentButtonPress():
+        """This function will show the add student form."""
         active_button = 'addStudentButton'
         showSidebar(root_window, active_button)
 
     def onShowAllStudentsButtonPress():
+        """This function will show the list of all students."""
         active_button = 'showAllStudentsButton'
         showSidebar(root_window, active_button)
 
     def onInitializeSystemButtonPress():
+        """This function will show the initialize system form."""
         active_button = 'initializeSystem'
         showSidebar(root_window, active_button)
 
+    # the sidebar frame
     leftFrame = ctk.CTkFrame(master=root_window, bg_color="#f5f5f5", width=320)
     leftFrame.pack(side=tk.LEFT, fill=tk.Y)
 
+    # display the logo
     logoFrame = ctk.CTkFrame(
         master=leftFrame, bg_color="transparent", fg_color="transparent")
     logoFrame.pack(padx=24, pady=24, fill=tk.X)
@@ -36,10 +47,12 @@ def showSidebar(root_window, active_button=None):
         logoFrame, image=ctk.CTkImage(light_image=Image.open('resources/header.png'), dark_image=Image.open('resources/header.png'), size=(277, 77)), text="")
     logoImage.grid(row=0, column=0, sticky=tk.W)
 
+    # sidebar buttons
     leftButtonsFrame = ctk.CTkFrame(
         master=leftFrame, bg_color="transparent", fg_color="transparent")
     leftButtonsFrame.pack(pady=16, fill=tk.BOTH, expand=True)
 
+    # sidebar buttons configuration
     buttonsConfig = {
         "addStudentButton": {
             "bg": "#ffffff" if active_button != 'addStudentButton' else "#6FFD9D",
@@ -74,6 +87,7 @@ def showSidebar(root_window, active_button=None):
 
     }
 
+    # Printing all the buttons
     addStudentButton = tk.Button(
         master=leftButtonsFrame, text="Add student", font=font, command=onAddStudentButtonPress, borderwidth=0, **buttonsConfig['addStudentButton'])
     addStudentButton.pack(fill=tk.X)

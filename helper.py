@@ -9,6 +9,10 @@ from tkinter.messagebox import showwarning
 
 
 def printTable(table):
+    """This function prints the table in a tkinter treeview widget in a nice way.
+    Args:
+        table (Treeview): This is the widget in which we're print the data.
+    """
     con = sqlite3.connect(databaseName)
     cur = con.cursor()
 
@@ -28,6 +32,9 @@ def printTable(table):
 
 
 def downloadReport(id):
+    """
+    This function will download the attendance report of a student
+    """
     files = [('Excel files', '*.xlsx'), ('All files', '*.*')]
     attendanceReport = getAttendanceTableFor(id)
     filename = asksaveasfile(
@@ -57,12 +64,10 @@ def getColumnNames(table: str):
 
 def markAttendance(students: list, course: str, dayTime: str) -> None:
     """
-    This function accepts a list of student ids which are supposed to
-    be marked as present.
-    Second argument is the course for which this attendance is to be
-    marked.
-    Third is the unique Identifier for this day and this time of this
-    class. (Example: 15-12-2022-900)
+    This function accepts a list of student ids which are supposed to be marked as present.
+    Second argument is the course for which this attendance is to be marked.
+    Third is the unique Identifier for this day and this time of this class.
+    (Example: 15-12-2022-900)
     """
     course = course.upper()
     columns = getColumnNames(course)
@@ -92,6 +97,14 @@ def markAttendance(students: list, course: str, dayTime: str) -> None:
 
 
 def getTotalNumberOfRecords(table):
+    """This function will return total number of records in a table.
+
+    Args:
+        table (string): This is the table name for which we want to get the total number of records.
+
+    Returns:
+        number: number of records in the table
+    """
     db = sqlite3.connect(databaseName)
     cursor = db.cursor()
 
@@ -205,6 +218,14 @@ def getAttendanceTableFor(id: str) -> pd.DataFrame:
 
 
 def loadName(id):
+    """This function will return name of student whose id is passed.
+
+    Args:
+        id (number): CMS ID of student
+
+    Returns:
+        string: Name of student
+    """
     db = sqlite3.connect(databaseName)
     cursor = db.cursor()
     query = f"SELECT * FROM {tableName} WHERE cmsId={id}"
@@ -215,11 +236,27 @@ def loadName(id):
 
 
 def getFrameInRGB(capture):
+    """This function will return a frame from the capture object in RGB format.
+
+    Args:
+        capture (frame): This is the capture object from which we want to get the frame.
+
+    Returns:
+        frame: This is the frame in RGB format.
+    """
     success, frame = capture.read()
     return cv.cvtColor(frame, cv.COLOR_BGR2RGB) if success else None
 
 
 def getDefaultAttendanceRecord(today):
+    """This function will return a default attendance record for a day.
+
+    Args:
+        today (string): This is the date for which we want to create a default attendance record.
+
+    Returns:
+        dict: This is the default attendance record for a day.
+    """
     return {
         "day": today,
         "0900": 0, "1000": 0, "1100": 0, "1200": 0, "1300": 0, "1400": 0, "1500": 0, "1600": 0
@@ -227,6 +264,14 @@ def getDefaultAttendanceRecord(today):
 
 
 def getCSV(filename):
+    """This function will return a list of encodings from a csv file.
+
+    Args:
+        filename (string): This is the name of the csv file from which we want to get the encodings.
+
+    Returns:
+        list: This is the list of encodings.
+    """
     with open(f"./{directoryName}/{filename}") as f:
         reader = csv.reader(f)
         encodings = []
@@ -237,6 +282,11 @@ def getCSV(filename):
 
 
 def getKnownEncodings():
+    """This function will return a dictionary of known encodings.
+
+    Returns:
+        Series: This is the dictionary of known encodings.
+    """
     knownEncodingFiles = os.listdir(f"./{directoryName}")
     knownEncodings = pd.Series(dtype='float64')
     for file in knownEncodingFiles:
@@ -246,9 +296,11 @@ def getKnownEncodings():
 
 
 def showMessage(text):
+    """This function will show a message box with the text passed."""
     showwarning("Warning", text)
 
 
 def truncateWidget(widget):
+    """This function will remove all the children of a widget."""
     for child in widget.winfo_children():
         child.destroy()

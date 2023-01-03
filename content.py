@@ -9,6 +9,13 @@ from helper import truncateWidget
 
 
 def showContent(rightFrame, active_button=None, root_window=None):
+    """This function will show the content.
+
+    Args:
+        rightFrame (ctk.CTkFrame): This is the right frame.
+        active_button (string, optional): This is the active button. Defaults to None.
+        root_window (tk.Tk, optional): This is the root window. Defaults to None.
+    """
     fontTitle = ctk.CTkFont(family="Inter", size=64)
 
     if active_button == 'addStudentButton':

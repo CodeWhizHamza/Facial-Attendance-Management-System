@@ -7,11 +7,18 @@ import student_list
 
 
 def studentReport(id, rightFrame):
+    """This function will display the student report.
+
+    Args:
+        id (string): This is the student id.
+        rightFrame (ctk.CTkFrame): This is the right frame.
+    """
     font40 = ctk.CTkFont('Arial', 40)
     font24 = ctk.CTkFont('Arial', 24)
 
     truncateWidget(rightFrame)
 
+    # the empty space above any other widget
     emptyFrame = ctk.CTkFrame(
         master=rightFrame, bg_color="transparent", fg_color="transparent", height=120)
     emptyFrame.pack(side=tk.TOP, fill=tk.X)
@@ -29,7 +36,8 @@ def studentReport(id, rightFrame):
         master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=640)
     reportFrame.pack(side=tk.TOP, fill=tk.X, padx=80, pady=64, anchor=tk.W)
 
-    for index, course in enumerate(list(courses)):
+    # print the attendance percentage for each course
+    for _, course in enumerate(list(courses)):
         courseFrame = ctk.CTkFrame(
             master=reportFrame, bg_color="transparent", fg_color="transparent", width=960, height=80)
         courseFrame.pack(side=tk.TOP, fill=tk.X, anchor=tk.W)
@@ -39,6 +47,7 @@ def studentReport(id, rightFrame):
             master=courseFrame, text=f"{course} - {attendancePercentage}", font=font24, bg="#ffffff", fg="#333333", justify='left', anchor='w', wraplength=960)
         courseLabel.pack(fill=tk.X, side=tk.LEFT, padx=40, pady=4)
 
+    # Download report button
     detailsButton = tk.Button(master=rightFrame, text="Get Student report", font=font24, bg="#6FFD9D", fg="#333333", activebackground="#62E48C",
                               activeforeground="#333333", bd=0, highlightthickness=0, relief=tk.FLAT, padx=24, pady=12, command=lambda: downloadReport(id))
     detailsButton.pack(side=tk.TOP, padx=80, anchor=tk.W)

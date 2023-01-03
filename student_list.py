@@ -11,12 +11,18 @@ from helper import printTable, truncateWidget
 
 
 def main(rightFrame):
+    """This function will display the student list.
+
+    Args:
+        rightFrame (ctk.CTkFrame): This is the right frame.
+    """
     font40 = ctk.CTkFont('Arial', 40)
     font24 = ctk.CTkFont('Arial', 24)
     studentDetails = tk.Variable()
 
     truncateWidget(rightFrame)
 
+    # the empty space above any other widget
     emptyFrame = ctk.CTkFrame(
         master=rightFrame, bg_color="transparent", fg_color="transparent", height=120)
     emptyFrame.pack(side=tk.TOP, fill=tk.X)
@@ -30,10 +36,20 @@ def main(rightFrame):
     rightHeaderLabel.pack(fill=tk.X, side=tk.LEFT, padx=80)
 
     def selectRecord(item):
+        """This function will select the record.
+
+        Args:
+            item (Treeview.Item): This is the item to be selected.
+        """
         item = table.selection()
         studentDetails.set(table.item(item)['values'])
 
     def studentSelected():
+        """This function will check if a student is selected.
+
+        Returns:
+            bool: This is the result of the check.
+        """
         if not studentDetails.get():
             tk.messagebox.showinfo("Info", "No student selected.")
             return False
@@ -41,20 +57,24 @@ def main(rightFrame):
             return True
 
     def editStudentDetails():
+        """This function will edit the student details."""
         if studentSelected():
             studentId = studentDetails.get()[0]
             editStudent(studentId, rightFrame)
 
     def deleteStudentDetails():
+        """This function will delete the student details."""
         if studentSelected():
             studentId = studentDetails.get()[0]
             deleteStudent(studentId, table, rightFrame)
 
     def getStudentReport():
+        """This function will get the student report."""
         if studentSelected():
             studentId = studentDetails.get()[0]
             studentReport(studentId, rightFrame)
 
+    # if no students are found, show a message
     if not os.path.exists('./known_encodings'):
         labelFrame = ctk.CTkFrame(
             master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=80)
@@ -63,6 +83,7 @@ def main(rightFrame):
                  wraplength=800, justify='left', anchor='w', font=font24).pack(side=tk.TOP, fill=tk.X, padx=80, pady=32)
         return
 
+    # if no students are found, show a message
     if len(os.listdir('./known_encodings')) == 0:
         labelFrame = ctk.CTkFrame(
             master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=80)
@@ -75,6 +96,7 @@ def main(rightFrame):
         master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=640)
     tableFrame.pack(side=tk.TOP, fill=tk.X, padx=80, pady=64, anchor=tk.W)
 
+    # styles for treeview
     style = ttk.Style()
     style.configure("Treeview.Heading", font=font24)
     style.configure("Treeview", font=font24, rowheight=32, width=900)

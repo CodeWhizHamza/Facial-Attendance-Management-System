@@ -3,22 +3,40 @@ import customtkinter as ctk
 from helper import truncateWidget
 from config import password
 import attendance
+from tkinter.messagebox import showwarning
 
 
 def isAdmin(rightFrame, message, root_window):
+    """This function will verify the admin password.
+
+    Args:
+        rightFrame (ctk.CTkFrame): This is the right frame.
+        message (string): This is the message to be displayed.
+        root_window (tk.Tk): This is the root window.
+    """
     font40 = ctk.CTkFont('Arial', 40)
     font24 = ctk.CTkFont('Arial', 24)
 
     def verifyPassword():
+        """This function will verify the password.
+
+        Returns:
+            bool: This is the result of the verification.
+        """
         if passwordEntry.get() == password:
             return True
         else:
             return False
 
     def verifyAdmin():
+        """This function will verify the admin password.
+
+        If the password is correct, it will call the attendance.main function.
+        """
         if verifyPassword():
             attendance.main(rightFrame, root_window)
         else:
+            showwarning("Warning", "Invalid admin password.")
             isAdmin(rightFrame, "Invalid admin password.")
 
     truncateWidget(rightFrame)

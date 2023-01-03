@@ -1,5 +1,7 @@
 import pandas as pd
 
+"""This file contains all the configuration variables."""
+
 databaseName = "db.sqlite"
 tableName = "students"
 directoryName = "known_encodings"

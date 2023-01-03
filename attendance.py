@@ -15,6 +15,7 @@ from config import *
 from helper import *
 import sideBar
 
+# global variables
 isTimerStarted = False
 isEndButtonClicked = False
 SECONDS_IN_MINUTE = 60
@@ -22,6 +23,14 @@ cmsIDList = []
 
 
 def showMessage(rightFrame, message, font24, root_window):
+    """This function will show the message in the right frame.
+
+    Args:
+        rightFrame (ctk.CTkFrame): This is the frame in which the message is to be shown.
+        message (string): This is the message to be shown.
+        font24 (ctk.CTkFont): This is the font to be used for the message.
+        root_window (tk.Tk): This is the root window of the application.
+    """
     labelFrame = ctk.CTkFrame(
         master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=80)
     labelFrame.pack(side=tk.TOP, fill=tk.X)
@@ -34,6 +43,12 @@ def showMessage(rightFrame, message, font24, root_window):
 
 
 def main(rightFrame, root_window=None):
+    """This function will show the attendance screen.
+
+    Args:
+        rightFrame (ctk.CTkFrame): This is the frame in which the attendance screen is to be shown.
+        root_window (tk.Tk, optional): This is the root window of the application. Defaults to None.
+    """
     font40 = ctk.CTkFont('Inter', 40)
     font24 = ctk.CTkFont('Inter', 24)
     global attendanceShouldRun, cmsIDList
@@ -65,11 +80,13 @@ def main(rightFrame, root_window=None):
     except FileNotFoundError:
         todayClassesRecord = getDefaultAttendanceRecord(today)
 
+    # if it's a weekend
     if today == "Saturday" or today == "Sunday":
         showMessage(
             rightFrame, "It's a weekend. Go and enjoy your Weekend :)", font24, root_window)
         return
 
+    # if it's outside class hours
     if 900 > int(currentDate.strftime("%H%M")) or int(currentDate.strftime("%H%M")) > 1700:
         showMessage(
             rightFrame, "Attendance can only be marked between 9:00 AM to 5:00 PM.", font24, root_window)
@@ -79,11 +96,13 @@ def main(rightFrame, root_window=None):
     currentClassTime = time.strftime("%H00")
     currentTimeTable = timeTable.loc[today]
 
+    # if there is no class going on right now
     if currentTimeTable is not None and currentTimeTable[currentClassTime] is None:
         showMessage(rightFrame, "No class is going on right now.",
                     font24, root_window)
         return
 
+    # if no student data is found
     if not os.path.exists('./known_encodings'):
         showMessage(
             rightFrame, "No students data found. Please add students first.", font24, root_window)
@@ -94,6 +113,11 @@ def main(rightFrame, root_window=None):
         return
 
     def endAttendance(overcomeCondition) -> None:
+        """This function will end the attendance.
+
+        Args:
+            overcomeCondition (bool): this is condition for overcoming password authentication.
+        """
         global cmsIDList
         dayTime = currentDate.strftime("%d-%m-%Y-%H00")
         if isTimerStarted:
@@ -107,12 +131,24 @@ def main(rightFrame, root_window=None):
             sideBar.showSidebar(root_window)
 
     def updateFrame(frame, frameContainer):
+        """This function will update the frame.
+
+        Args:
+            frame (frame): This is the frame to be updated.
+            frameContainer (tk.Canvas): This is the canvas on which the frame is to be shown.
+        """
         img = Image.fromarray(frame)
         photo = ImageTk.PhotoImage(master=frameContainer, image=img)
         frameContainer.create_image(360, 240, image=photo)
         frameContainer.image = photo
 
     def printTextOnFrame(frame, text):
+        """This function will print the text on the frame.
+
+        Args:
+            frame (frame): This is the frame on which the text is to be printed.
+            text (str): This is the text to be printed.
+        """
         if not len(frame):
             return
 
@@ -121,6 +157,14 @@ def main(rightFrame, root_window=None):
         updateFrame(frame, cameraFeedContainer)
 
     def getCMSIdFor(encoding):
+        """This function will return the CMS ID for the encoding.
+
+        Args:
+            encoding (list): This is the encoding for which the CMS ID is to be found.
+
+        Returns:
+            str: This is the CMS ID for the encoding.
+        """
         matches = face_recognition.compare_faces(
             knownEncodings.tolist(), encoding, tolerance=0.44)
         if True not in matches:
@@ -130,6 +174,13 @@ def main(rightFrame, root_window=None):
         return knownEncodings.index[indexOfMatched]
 
     def displayMarkerOnFace(frame, face, cmsId):
+        """This function will display the marker on the face.
+
+        Args:
+            frame (frame): This is the frame on which the marker is to be displayed.
+            face (list): This is the face on which the marker is to be displayed.
+            cmsId (str): This is the CMS ID of the student.
+        """
         top, right, bottom, left = [coord * 4 for coord in face]
         font = cv.FONT_HERSHEY_DUPLEX
         text = "Unknown" if cmsId is None else cmsId
@@ -140,10 +191,21 @@ def main(rightFrame, root_window=None):
                                  bottom - 6), font, 1.0, (255, 255, 255), 1)
 
     def addStateToJSON(file, data):
+        """This function will add the state to the JSON file.
+
+        Args:
+            file (str): This is the file to which the state is to be added.
+            data (dict): This is the data to be added.
+        """
         with open(file, 'w') as f:
             json.dump(data, f)
 
     def closeWindow(overcomeCondition=False):
+        """This function will close the window.
+
+        Args:
+            overcomeCondition (bool, optional): This is the condition for overcoming password authentication. Defaults to False.
+        """
         global isEndButtonClicked
         isEndButtonClicked = True
         if not overcomeCondition:
@@ -178,6 +240,11 @@ def main(rightFrame, root_window=None):
     knownEncodings = getKnownEncodings()
 
     def mainLoop() -> None:
+        """This is the main loop of the attendance system.
+
+        Returns:
+            None: This function does not return anything.
+        """
         global isTimerStarted
         global cmsIDList
         cmsIDList = []
@@ -192,9 +259,10 @@ def main(rightFrame, root_window=None):
         smallFrame = cv.resize(frame, (0, 0), fy=0.25, fx=0.25)
         faces = face_recognition.face_locations(smallFrame)
 
+        # if there or more than one person in the frame
         if len(faces) != 1:
             printTextOnFrame(
-                frame, "Ensure there is one person facing camera.")
+                frame, "One person is allowed in frame.")
             updateFrame(frame, cameraFeedContainer)
             return
 
@@ -218,6 +286,7 @@ def main(rightFrame, root_window=None):
     endButton.pack(side=tk.TOP, padx=80, anchor=tk.W)
 
     def startCamera():
+        """This function will start the camera."""
         global isEndButtonClicked
         mainLoop()
         if not isEndButtonClicked:

@@ -5,6 +5,7 @@ from sideBar import showSidebar
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("green")
 
+# Root window
 window = ctk.CTk()
 window.title("AMS")
 window.geometry('1280x720')

@@ -12,12 +12,23 @@ import sideBar
 
 
 def main(rightFrame, root_window=None):
+    """This function will add the student.
+
+    Args:
+        rightFrame (ctk.CTkFrame): This is the frame in which the student is to be added.
+        root_window (tkinter.Tk): This is the root window of the application.
+    """
     font40 = ctk.CTkFont('Inter', 40)
     font24 = ctk.CTkFont('Inter', 24)
     faceEncodings = tk.Variable()
     truncateWidget(rightFrame)
 
     def takeImage(imageTakenLabel):
+        """This function will take the image of the student.
+
+        Args:
+            imageTakenLabel (ctk.CTkLabel): This is the label which will show that the image is taken.
+        """
         capture = cv.VideoCapture(0)
 
         if not capture:
@@ -50,6 +61,11 @@ def main(rightFrame, root_window=None):
         imageTakenLabel.configure(text="Image taken")
 
     def validateUserData():
+        """This function will validate the user data.
+
+        Returns:
+            bool: This will return true if the data is valid.
+        """
         studentName = nameEntry.get()
         studentCmsID = cmsIdEntry.get()
         studentSemester = semesterEntry.get()
@@ -81,6 +97,15 @@ def main(rightFrame, root_window=None):
         return True
 
     def isIdUnique(cursor, id):
+        """This function will check if the CMS ID is unique.
+
+        Args:
+            cursor (sqlite3.Cursor): This is the cursor of the database.
+            id (str): This is the CMS ID of the student.
+
+        Returns:
+            bool: This will return true if the CMS ID is unique.
+        """
         cursor.execute(f"SELECT * FROM {tableName} WHERE cmsId={id};")
         if len(cursor.fetchall()) == 0:
             return True
@@ -88,6 +113,11 @@ def main(rightFrame, root_window=None):
             return False
 
     def addNewColumnToEachCourseTable(columnName):
+        """This function will add a new column to each course table.
+
+        Args:
+            columnName (str): This is the name of the column.
+        """
         db = sqlite3.connect(databaseName)
         cursor = db.cursor()
         for course in courses:
@@ -102,6 +132,7 @@ def main(rightFrame, root_window=None):
         db.close()
 
     def createTablesIfNotExists():
+        """This function will create the tables if they don't exists."""
         db = sqlite3.connect(databaseName)
         cursor = db.cursor()
 
@@ -117,6 +148,7 @@ def main(rightFrame, root_window=None):
         db.close()
 
     def saveData():
+        """This function will save the data of the student."""
         isValid = validateUserData()
         if not isValid:
             return

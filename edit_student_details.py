@@ -13,6 +13,15 @@ import student_list
 
 
 def editStudent(id, rightFrame):
+    """This function will edit the student details.
+
+    Args:
+        id (number): This is the id of the student whose details are to be edited.
+        rightFrame (ctk.CTkFrame): This is the frame in which the details are to be displayed.
+
+    Returns:
+        None: This function does not return anything. This is just to stop execution
+    """
     studentId = tk.IntVar()
     studentName = tk.StringVar()
     studentSemester = tk.IntVar()
@@ -21,6 +30,7 @@ def editStudent(id, rightFrame):
     font24 = ctk.CTkFont('Arial', 24)
 
     def loadStudentData():
+        """This function will load the student data from the database and set it to the global variables."""
         db = sqlite3.connect(databaseName)
         cursor = db.cursor()
 
@@ -35,6 +45,7 @@ def editStudent(id, rightFrame):
         cursor.close()
         db.close()
 
+        # read student encodings
         with open(f"./{directoryName}/{id}.csv") as f:
             reader = csv.reader(f)
             encodings = []
@@ -48,6 +59,7 @@ def editStudent(id, rightFrame):
     loadStudentData()
 
     def takeImage():
+        """This function will take the image of the student. This uses opencv to capture the image."""
         capture = cv.VideoCapture(0)
 
         if not capture:
@@ -78,6 +90,11 @@ def editStudent(id, rightFrame):
         faceEncodings.set(encodings)
 
     def validateUserData():
+        """This function will validate the user data.
+
+        Returns:
+            bool: This function will return True if the data is valid else it will return False.
+        """
         studentName = nameEntry.get()
         studentCmsID = cmsIdEntry.get()
         studentSemester = semesterEntry.get()
@@ -109,6 +126,7 @@ def editStudent(id, rightFrame):
         return True
 
     def updateData():
+        """This function will update the data in the database."""
         isValid = validateUserData()
         if not isValid:
             return

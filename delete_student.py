@@ -8,8 +8,20 @@ from helper import truncateWidget
 
 
 def deleteStudent(id, table, rightFrame):
+    """This function will delete the student.
 
+    Args:
+        id (number): This is the id of the student to be deleted.
+        table (tkinter.Treeview): This is the table in which the student is to be deleted.
+        rightFrame (ctk.CTkFrame): This is the frame in which the student is to be deleted.
+    """
     def deleteStudent(id, table):
+        """This function will delete the student.
+
+        Args:
+            id (number): This is the id of the student to be deleted.
+            table (tkinter.Treeview): This is the table in which the student is to be deleted.
+        """
         db = sqlite3.connect(databaseName)
         cursor = db.cursor()
 

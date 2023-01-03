@@ -8,11 +8,15 @@ from config import *
 
 
 def getReport():
+    """This function will download the attendance report of a student"""
+
+    # If no students are added, then show warning and return
     if not os.path.exists("./known_encodings"):
         messagebox.showwarning(
             "Warning", "No students found. Please add students and mark their attendance first.")
         return
 
+    # If no students are added, then show warning and return
     if len(os.listdir("./known_encodings")) == 0:
         messagebox.showwarning(
             "Warning", "No students found. Please add students and mark their attendance first.")
@@ -28,11 +32,13 @@ def getReport():
     cursor.close()
     db.close()
 
+    # Ask user for filename and location
     filename = asksaveasfile(
         filetypes=files, defaultextension=files, initialfile='class_attendance_record')
     if not filename:
         return
 
+    # write data to excel file
     filename = filename.name
     writer = pd.ExcelWriter(filename)
     for id in ids:
