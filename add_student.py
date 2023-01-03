@@ -9,18 +9,16 @@ import customtkinter as ctk
 from config import *
 from helper import showMessage, truncateWidget
 from tkinter.messagebox import showinfo
-import student_list
 import sideBar
 
 
 def main(rightFrame, root_window=None):
-    font40 = ctk.CTkFont('Arial', 40)
-    font24 = ctk.CTkFont('Arial', 24)
+    font40 = ctk.CTkFont('Inter', 40)
+    font24 = ctk.CTkFont('Inter', 24)
     faceEncodings = tk.Variable()
-
     truncateWidget(rightFrame)
 
-    def takeImage():
+    def takeImage(imageTakenLabel):
         capture = cv.VideoCapture(0)
 
         if not capture:
@@ -44,12 +42,13 @@ def main(rightFrame, root_window=None):
         face = faces[0]
         cv.rectangle(frame, (face[3], face[0]),
                      (face[1], face[2]), (255, 255, 255), 1)
-        cv.imshow("Image", frame)
+        # cv.imshow("Image", frame)
 
         encodings = face_recognition.face_encodings(frame, [face])[0]
         encodingsInString = [str(value) for value in encodings]
         encodingsInString = ",".join(encodingsInString)
         faceEncodings.set(encodingsInString)
+        imageTakenLabel.configure(text="Image taken")
 
     def validateUserData():
         studentName = nameEntry.get()
@@ -220,10 +219,13 @@ def main(rightFrame, root_window=None):
     semesterEntry.grid(column=1, row=2, padx=24)
 
     # Printing take image button
+    imageTakenLabel = ctk.CTkLabel(master=entriesFrame, text="",
+                                   font=font24, text_color="#333333", bg_color='transparent', fg_color="transparent")
+    imageTakenLabel.grid(column=2, row=3, sticky=tk.W)
     takeImageLabel = ctk.CTkLabel(master=entriesFrame, text="Your image: ",
                                   font=font24)
     takeImageButton = tk.Button(master=entriesFrame, text="Take Image",
-                                font=font24, command=takeImage, bg="#6FFD9D", fg="#333333", activebackground="#62E48C", activeforeground="#333333", bd=0, highlightthickness=0, relief=tk.FLAT, padx=24, pady=12)
+                                font=font24, command=lambda: takeImage(imageTakenLabel), bg="#6FFD9D", fg="#333333", activebackground="#62E48C", activeforeground="#333333", bd=0, highlightthickness=0, relief=tk.FLAT, padx=24, pady=12)
     takeImageLabel.grid(column=0, row=3, sticky=tk.W)
     takeImageButton.grid(column=1, row=3, pady=24, sticky=tk.W, padx=24)
 
