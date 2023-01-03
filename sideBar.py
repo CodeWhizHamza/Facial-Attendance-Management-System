@@ -10,9 +10,7 @@ from helper import truncateWidget
 
 def showSidebar(root_window, active_button=None):
     font = ctk.CTkFont(family="Arial", size=20)
-
     root_window.protocol("WM_DELETE_WINDOW", lambda: root_window.destroy())
-
     truncateWidget(root_window)
 
     def onAddStudentButtonPress():

@@ -2,7 +2,6 @@ import tkinter as tk
 import customtkinter as ctk
 from helper import truncateWidget
 from config import password
-
 import attendance
 
 

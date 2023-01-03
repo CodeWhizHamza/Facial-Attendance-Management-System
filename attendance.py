@@ -3,7 +3,6 @@ import customtkinter as ctk
 import cv2 as cv
 import face_recognition
 from datetime import datetime
-import time as t
 import calendar
 import threading as th
 import json
@@ -71,7 +70,7 @@ def main(rightFrame, root_window=None):
             rightFrame, "It's a weekend. Go and enjoy your Weekend :)", font24, root_window)
         return
 
-    elif 900 > int(currentDate.strftime("%H%M")) or int(currentDate.strftime("%H%M")) > 1700:
+    if 900 > int(currentDate.strftime("%H%M")) or int(currentDate.strftime("%H%M")) > 1700:
         showMessage(
             rightFrame, "Attendance can only be marked between 9:00 AM to 5:00 PM.", font24, root_window)
         return
@@ -226,7 +225,3 @@ def main(rightFrame, root_window=None):
 
     startCamera()
     root_window.protocol("WM_DELETE_WINDOW", lambda: closeWindow(True))
-
-
-if __name__ == "__main__":
-    main()

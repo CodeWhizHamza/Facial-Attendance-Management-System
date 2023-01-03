@@ -6,8 +6,6 @@ from config import *
 import sqlite3
 from tkinter.filedialog import asksaveasfile
 from tkinter.messagebox import showwarning
-import tkinter as tk
-import customtkinter as ctk
 
 
 def printTable(table):

@@ -1,6 +1,4 @@
-import tkinter as tk
 import customtkinter as ctk
-from PIL import Image
 
 from sideBar import showSidebar
 

@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import ttk
 import customtkinter as ctk
 import cv2 as cv
 import face_recognition
