@@ -1,3 +1,7 @@
+"""
+Part by: Muhammad Hamza
+"""
+
 import tkinter as tk
 import customtkinter as ctk
 from helper import truncateWidget

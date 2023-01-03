@@ -1,3 +1,7 @@
+"""
+Part by: Muhammad Hamza
+"""
+
 import sqlite3
 from tkinter.filedialog import asksaveasfile
 from tkinter import messagebox

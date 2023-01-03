@@ -1,3 +1,10 @@
+"""
+Done by:
+ * Muhammad Hamza
+ * Ahmed Mohiuddin
+ * Maheen Ahmed
+"""
+
 import pandas as pd
 
 """This file contains all the configuration variables."""

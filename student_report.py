@@ -1,3 +1,7 @@
+"""
+Part by: Maheen Ahmed
+"""
+
 import tkinter as tk
 import customtkinter as ctk
 

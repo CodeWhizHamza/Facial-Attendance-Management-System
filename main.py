@@ -1,3 +1,7 @@
+"""
+Part by: Muhammad Hamza
+"""
+
 import customtkinter as ctk
 
 from sideBar import showSidebar

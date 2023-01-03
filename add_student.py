@@ -1,3 +1,7 @@
+"""
+Part by: Muhammad Hamza
+"""
+
 import tkinter as tk
 import cv2 as cv
 import face_recognition

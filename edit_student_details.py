@@ -1,3 +1,7 @@
+"""
+Part by: Muhammad Hamza
+"""
+
 import tkinter as tk
 import customtkinter as ctk
 import cv2 as cv

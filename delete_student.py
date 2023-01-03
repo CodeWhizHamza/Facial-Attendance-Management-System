@@ -1,3 +1,7 @@
+"""
+Part by: Muhammad Hamza
+"""
+
 from tkinter.messagebox import askyesno
 import sqlite3
 import os
