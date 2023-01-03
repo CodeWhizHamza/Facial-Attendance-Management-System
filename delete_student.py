@@ -5,10 +5,11 @@ import sqlite3
 import os
 
 from config import *
-from helper import printTable
+import student_list
+from helper import truncateWidget
 
 
-def deleteStudent(id, table):
+def deleteStudent(id, table, rightFrame):
 
     def deleteStudent(id, table):
         db = sqlite3.connect(databaseName)
@@ -30,7 +31,9 @@ def deleteStudent(id, table):
 
         for item in table.get_children():
             table.delete(item)
-        printTable(table)
+
+        truncateWidget(rightFrame)
+        student_list.main(rightFrame)
 
     if askyesno(title="Confirm", message="Are you sure to delete this student?"):
         deleteStudent(id, table)

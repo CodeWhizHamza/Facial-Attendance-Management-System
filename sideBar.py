@@ -5,6 +5,7 @@ from PIL import Image
 
 from getTotalAttendanceReport import getReport
 from content import showContent
+from helper import truncateWidget
 
 
 def showSidebar(root_window, active_button=None):
@@ -12,24 +13,19 @@ def showSidebar(root_window, active_button=None):
 
     root_window.protocol("WM_DELETE_WINDOW", lambda: root_window.destroy())
 
-    # clear content of root window
-    for widget in root_window.winfo_children():
-        widget.destroy()
+    truncateWidget(root_window)
 
     def onAddStudentButtonPress():
         active_button = 'addStudentButton'
         showSidebar(root_window, active_button)
-        # add_student.main(root_window)
 
     def onShowAllStudentsButtonPress():
         active_button = 'showAllStudentsButton'
         showSidebar(root_window, active_button)
-        # student_list.main(root_window)
 
     def onInitializeSystemButtonPress():
         active_button = 'initializeSystem'
         showSidebar(root_window, active_button)
-        # attendance.main(root_window)
 
     leftFrame = ctk.CTkFrame(master=root_window, bg_color="#f5f5f5", width=320)
     leftFrame.pack(side=tk.LEFT, fill=tk.Y)

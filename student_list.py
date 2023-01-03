@@ -48,7 +48,7 @@ def main(rightFrame):
     def deleteStudentDetails():
         if studentSelected():
             studentId = studentDetails.get()[0]
-            deleteStudent(studentId, table)
+            deleteStudent(studentId, table, rightFrame)
 
     def getStudentReport():
         if studentSelected():
@@ -56,6 +56,14 @@ def main(rightFrame):
             studentReport(studentId, rightFrame)
 
     if not os.path.exists('./known_encodings'):
+        labelFrame = ctk.CTkFrame(
+            master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=80)
+        labelFrame.pack(side=tk.TOP, fill=tk.X)
+        tk.Label(master=labelFrame, text="No students found. Please add students first", bg='#ffffff', fg='#333333',
+                 wraplength=800, justify='left', anchor='w', font=font24).pack(side=tk.TOP, fill=tk.X, padx=80, pady=32)
+        return
+
+    if len(os.listdir('./known_encodings')) == 0:
         labelFrame = ctk.CTkFrame(
             master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=80)
         labelFrame.pack(side=tk.TOP, fill=tk.X)

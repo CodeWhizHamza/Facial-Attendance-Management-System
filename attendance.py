@@ -37,7 +37,6 @@ def showMessage(rightFrame, message, font24, root_window):
 def main(rightFrame, root_window=None):
     font40 = ctk.CTkFont('Inter', 40)
     font24 = ctk.CTkFont('Inter', 24)
-    cameraShouldStart = True
     global attendanceShouldRun, cmsIDList
     attendanceShouldRun = False
     cmsIDList = []
@@ -88,7 +87,11 @@ def main(rightFrame, root_window=None):
 
     if not os.path.exists('./known_encodings'):
         showMessage(
-            rightFrame, "No known encodings found. Please add students first.", font24, root_window)
+            rightFrame, "No students data found. Please add students first.", font24, root_window)
+        return
+    if len(os.listdir('./known_encodings')) == 0:
+        showMessage(
+            rightFrame, "No students data found. Please add students first.", font24, root_window)
         return
 
     def endAttendance(overcomeCondition) -> None:

@@ -8,7 +8,12 @@ from config import *
 
 
 def getReport():
-    if not os.path.exists("./known_encodings.pickle"):
+    if not os.path.exists("./known_encodings"):
+        messagebox.showwarning(
+            "Warning", "No students found. Please add students and mark their attendance first.")
+        return
+
+    if len(os.listdir("./known_encodings")) == 0:
         messagebox.showwarning(
             "Warning", "No students found. Please add students and mark their attendance first.")
         return
