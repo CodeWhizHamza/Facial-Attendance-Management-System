@@ -25,3 +25,6 @@ for item in timeTable.values:
         if i is None or i in courses:
             continue
         courses.append(i)
+
+
+password = "admin"

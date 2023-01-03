@@ -3,28 +3,40 @@ import customtkinter as ctk
 import cv2 as cv
 import face_recognition
 from datetime import datetime
+import time as t
 import calendar
 import threading as th
 import json
 from PIL import Image, ImageTk
+from tkinter import simpledialog
+from tkinter import messagebox
+import os
 
 from config import *
 from helper import *
+import sideBar
 
 isTimerStarted = False
-attendanceShouldRun = False
+isEndButtonClicked = False
 SECONDS_IN_MINUTE = 60
 cmsIDList = []
 
 
-def main(rightFrame):
-    window = ctk.CTkToplevel()
-    window.grab_set()
-    window.title("Start Attendance")
-    window.geometry('720x520')
-    ctk.set_appearance_mode("System")
-    ctk.set_default_color_theme("green")
+def showMessage(rightFrame, message, font24, root_window):
+    labelFrame = ctk.CTkFrame(
+        master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=80)
+    labelFrame.pack(side=tk.TOP, fill=tk.X)
+    tk.Label(master=labelFrame, text=message, bg='#ffffff', fg='#333333',
+             wraplength=800, justify='left', anchor='w', font=font24).pack(side=tk.TOP, fill=tk.X, padx=80, pady=32)
 
+    backButton = tk.Button(master=labelFrame, text="Go back",
+                           font=font24, command=lambda: sideBar.showSidebar(root_window, None), bg="#6FFD9D", fg="#333333", activebackground="#62E48C", activeforeground="#333333", bd=0, highlightthickness=0, relief=tk.FLAT, padx=64, pady=12)
+    backButton.pack(side=tk.LEFT, padx=80)
+
+
+def main(rightFrame, root_window=None):
+    font40 = ctk.CTkFont('Inter', 40)
+    font24 = ctk.CTkFont('Inter', 24)
     cameraShouldStart = True
     global attendanceShouldRun, cmsIDList
     attendanceShouldRun = False
@@ -32,6 +44,21 @@ def main(rightFrame):
 
     currentDate = datetime.now()
     today = calendar.day_name[currentDate.weekday()]
+
+    # make the right frame empty
+    # print the header on screen for this screen
+    truncateWidget(rightFrame)
+    emptyFrame = ctk.CTkFrame(
+        master=rightFrame, bg_color="transparent", fg_color="transparent", height=120)
+    emptyFrame.pack(side=tk.TOP, fill=tk.X)
+
+    rightHeaderFrame = ctk.CTkFrame(
+        master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=80)
+    rightHeaderFrame.pack(side=tk.TOP, fill=tk.X)
+
+    rightHeaderLabel = tk.Label(
+        master=rightHeaderFrame, text="Attendance", font=font40, bg="#ffffff", fg="#333333", justify='left', anchor='w', wraplength=960)
+    rightHeaderLabel.pack(fill=tk.X, side=tk.LEFT, padx=80)
 
     try:
         file = open('attendanceVariables.json', 'r')
@@ -41,52 +68,39 @@ def main(rightFrame):
         todayClassesRecord = getDefaultAttendanceRecord(today)
 
     if today == "Saturday" or today == "Sunday":
-        exitLabel = tk.Label(
-            window, text="It's a weekend, GO and enjoy your Weekend\n:)", font="Arial 24")
-        exitLabel.pack()
-        exitButton = ctk.CTkButton(
-            window, text="Close Window", command=lambda: window.destroy())
-        exitButton.pack()
-        cameraShouldStart = False
+        showMessage(
+            rightFrame, "It's a weekend. Go and enjoy your Weekend :)", font24, root_window)
+        return
 
     elif 900 > int(currentDate.strftime("%H%M")) or int(currentDate.strftime("%H%M")) > 1700:
-        exitLabel = tk.Label(
-            window, text="You Tried to initialize system out of class Hours.\n Please try again later -_-", font="Arial 24")
-        exitLabel.pack()
-        exitButton = ctk.CTkButton(
-            window, text="Close Window", command=lambda: window.destroy())
-        exitButton.pack()
-        cameraShouldStart = False
+        showMessage(
+            rightFrame, "Attendance can only be marked between 9:00 AM to 5:00 PM.", font24, root_window)
+        return
 
-    if cameraShouldStart:
-        currentTimeTable = timeTable.loc[today]
+    time = datetime.now()
+    currentClassTime = time.strftime("%H00")
+    currentTimeTable = timeTable.loc[today]
+
+    if currentTimeTable is not None and currentTimeTable[currentClassTime] is None:
+        showMessage(rightFrame, "No class is going on right now.",
+                    font24, root_window)
+        return
+
+    if not os.path.exists('./known_encodings'):
+        showMessage(
+            rightFrame, "No known encodings found. Please add students first.", font24, root_window)
+        return
 
     def endAttendance() -> None:
         global cmsIDList
         dayTime = currentDate.strftime("%d-%m-%Y-%H00")
-        if attendanceShouldRun:
+        if isTimerStarted:
             markAttendance(
                 cmsIDList, currentTimeTable[currentDate.strftime("%H00")], dayTime)
-        # global isTimerStarted
-        # global shouldRunAttendance
-        # isTimerStarted = False
-        # shouldRunAttendance = False
 
         attendanceTimerThread.cancel()
 
-        window.destroy()
-
-    attendanceDuration = 15 * SECONDS_IN_MINUTE
-    attendanceTimerThread = th.Timer(attendanceDuration, endAttendance)
-
-    if todayClassesRecord["day"] != today:
-        todayClassesRecord = getDefaultAttendanceRecord(today)
-
-    # Getting a video capture object for the camera
-    if cameraShouldStart:
-        capture = cv.VideoCapture(0)
-        capture.set(cv.CAP_PROP_FRAME_WIDTH, 720)
-        capture.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
+        sideBar.showSidebar(root_window)
 
     def updateFrame(frame, frameContainer):
         img = Image.fromarray(frame)
@@ -121,85 +135,92 @@ def main(rightFrame):
         cv.putText(frame, text, (left + 6,
                                  bottom - 6), font, 1.0, (255, 255, 255), 1)
 
-    knownEncodings = getKnownEncodings()
-
-    time = datetime.now()
-    currentClassTime = time.strftime("%H00")
-
-    def mainLoop() -> None:
-        global isTimerStarted
-        global attendanceShouldRun
-
-        if currentTimeTable[currentClassTime] is None:
-            frame = getFrameInRGB(capture)
-            printTextOnFrame(frame, "No class during this time slot.")
-            return
-
-        if todayClassesRecord[currentClassTime] == 0 and not isTimerStarted:
-            global cmsIDList
-            cmsIDList = []
-            attendanceTimerThread.start()
-            todayClassesRecord[currentClassTime] = 1
-            isTimerStarted = True
-            attendanceShouldRun = True
-
-        if attendanceShouldRun:
-            frame = getFrameInRGB(capture)
-            if not len(frame):
-                return
-
-            smallFrame = cv.resize(frame, (0, 0), fy=0.25, fx=0.25)
-            faces = face_recognition.face_locations(smallFrame)
-
-            if len(faces) != 1:
-                printTextOnFrame(
-                    frame, "Ensure that there is one person in front of camera.")
-                updateFrame(frame, cameraFeedContainer)
-                return
-
-            currentFace = faces[0]
-            face_encoding = face_recognition.face_encodings(
-                smallFrame, faces)[0]
-            cmsId = getCMSIdFor(face_encoding)
-            displayMarkerOnFace(frame, currentFace, cmsId)
-            if cmsId and cmsId not in cmsIDList:
-                cmsIDList.append(cmsId)
-
-            updateFrame(frame, cameraFeedContainer)
-        else:
-            frame = getFrameInRGB(capture)
-            printTextOnFrame(frame, "Attendance Already Done")
-
     def addStateToJSON(file, data):
         with open(file, 'w') as f:
             json.dump(data, f)
 
-    def closeWindow():
+    def closeWindow(overcomeCondition=False):
+        global isEndButtonClicked
+        isEndButtonClicked = True
+        if not overcomeCondition:
+            if simpledialog.askstring("Input", "Enter the password") != password:
+                messagebox.showerror("Error", "Wrong password")
+                return
         addStateToJSON('attendanceVariables.json', todayClassesRecord)
         capture.release()
         endAttendance()
-    currentClassName = currentTimeTable[currentClassTime] if currentTimeTable[currentClassTime] else "No class"
-    currentClassLabel = tk.Label(
-        window, text=f"Current Class: {currentClassName}", font="Arial 20")
-    currentClassLabel.pack()
-    cameraFeedContainer = tk.Canvas(window, width=720, height=440)
-    cameraFeedContainer.pack()
 
-    terminateButton = ctk.CTkButton(
-        window, text="Terminate", command=closeWindow)
-    terminateButton.pack()
+    attendanceDuration = 15 * SECONDS_IN_MINUTE
+    attendanceTimerThread = th.Timer(attendanceDuration, endAttendance)
 
-    delay = 1
+    if todayClassesRecord["day"] != today:
+        todayClassesRecord = getDefaultAttendanceRecord(today)
+
+    if todayClassesRecord[currentClassTime] != 0:
+        showMessage(
+            rightFrame, "Attendance has already been marked for this class.", font24)
+        return
+
+    currentClassName = None
+    if currentTimeTable is not None:
+        currentClassName = currentTimeTable[currentClassTime] if currentTimeTable[currentClassTime] else "No class"
+
+    rightHeaderLabel.configure(text=f"Attendance for {currentClassName}")
+
+    capture = cv.VideoCapture(0)
+    capture.set(cv.CAP_PROP_FRAME_WIDTH, 720)
+    capture.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
+
+    knownEncodings = getKnownEncodings()
+
+    def mainLoop() -> None:
+        global isTimerStarted
+        global cmsIDList
+        cmsIDList = []
+        if not isTimerStarted:
+            attendanceTimerThread.start()
+        todayClassesRecord[currentClassTime] = 1
+        isTimerStarted = True
+        frame = getFrameInRGB(capture)
+        if not len(frame):
+            return
+
+        smallFrame = cv.resize(frame, (0, 0), fy=0.25, fx=0.25)
+        faces = face_recognition.face_locations(smallFrame)
+
+        if len(faces) != 1:
+            printTextOnFrame(
+                frame, "Ensure there is one person facing camera.")
+            updateFrame(frame, cameraFeedContainer)
+            return
+
+        currentFace = faces[0]
+        face_encoding = face_recognition.face_encodings(
+            smallFrame, faces)[0]
+        cmsId = getCMSIdFor(face_encoding)
+        displayMarkerOnFace(frame, currentFace, cmsId)
+        if cmsId and cmsId not in cmsIDList:
+            cmsIDList.append(cmsId)
+
+        updateFrame(frame, cameraFeedContainer)
+
+    cameraFeedFrame = tk.Frame(rightFrame, width=720, height=440)
+    cameraFeedFrame.pack(side=tk.TOP, padx=80)
+    cameraFeedContainer = tk.Canvas(cameraFeedFrame, width=720, height=440)
+    cameraFeedContainer.pack(side=tk.LEFT)
+
+    endButton = tk.Button(master=rightFrame, text="End attendance",
+                          font=font24, command=closeWindow, bg="#6FFD9D", fg="#333333", activebackground="#62E48C", activeforeground="#333333", bd=0, highlightthickness=0, relief=tk.FLAT, padx=64, pady=12)
+    endButton.pack(side=tk.TOP, padx=80)
 
     def startCamera():
+        global isEndButtonClicked
         mainLoop()
-        window.after(delay, startCamera)
+        if not isEndButtonClicked:
+            root_window.after(1, startCamera)
 
-    if cameraShouldStart:
-        startCamera()
-
-    window.protocol("WM_DELETE_WINDOW", closeWindow)
-    window.mainloop()
+    startCamera()
+    root_window.protocol("WM_DELETE_WINDOW", lambda: closeWindow(True))
 
 
 if __name__ == "__main__":

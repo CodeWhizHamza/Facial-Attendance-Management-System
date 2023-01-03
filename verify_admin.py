@@ -1,23 +1,24 @@
 import tkinter as tk
 import customtkinter as ctk
 from helper import truncateWidget
+from config import password
 
 import attendance
 
 
-def isAdmin(rightFrame, message=None):
+def isAdmin(rightFrame, message, root_window):
     font40 = ctk.CTkFont('Arial', 40)
     font24 = ctk.CTkFont('Arial', 24)
 
     def verifyPassword():
-        if passwordEntry.get() == "admin":
+        if passwordEntry.get() == password:
             return True
         else:
             return False
 
     def verifyAdmin():
         if verifyPassword():
-            attendance.main(rightFrame)
+            attendance.main(rightFrame, root_window)
         else:
             isAdmin(rightFrame, "Invalid admin password.")
 
@@ -32,7 +33,7 @@ def isAdmin(rightFrame, message=None):
     rightHeaderFrame.pack(side=tk.TOP, fill=tk.X)
 
     rightHeaderLabel = tk.Label(
-        master=rightHeaderFrame, text="Verify your password" if message is None else message, font=font40, bg="#ffffff", fg="#333333", justify='left', anchor='w', wraplength=960)
+        master=rightHeaderFrame, text="Verify your password" if not message else message, font=font40, bg="#ffffff", fg="#333333", justify='left', anchor='w', wraplength=960)
     rightHeaderLabel.pack(fill=tk.X, side=tk.LEFT, padx=80)
 
     # entry to enter password
@@ -43,10 +44,10 @@ def isAdmin(rightFrame, message=None):
 
     passwordEntryLabel = tk.Label(
         master=passwordEntryFrame, text="Password: ", font=font24, bg="#ffffff", fg="#333333", justify='left')
-    passwordEntryLabel.pack(fill=tk.X, side=tk.LEFT,)
+    passwordEntryLabel.pack(fill=tk.X, side=tk.LEFT)
 
     passwordEntry = ctk.CTkEntry(
-        master=passwordEntryFrame, font=font24, bg_color="#ffffff", fg_color="#ffffff", text_color="#333333", justify='left', width=300)
+        master=passwordEntryFrame, font=font24, bg_color="#ffffff", fg_color="#ffffff", text_color="#333333", justify='left', width=300, show='●')
     passwordEntry.pack(fill=tk.X, side=tk.LEFT, padx=16)
 
     # buttons

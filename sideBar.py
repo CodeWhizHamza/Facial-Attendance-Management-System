@@ -7,7 +7,7 @@ from getTotalAttendanceReport import getReport
 from content import showContent
 
 
-def showSidebar(root_window, active_button):
+def showSidebar(root_window, active_button=None):
     font = ctk.CTkFont(family="Arial", size=20)
 
     # clear content of root window
@@ -98,4 +98,7 @@ def showSidebar(root_window, active_button):
         master=leftButtonsFrame, bg_color="transparent", fg_color="transparent")
     emptyFrame.pack(fill=tk.Y, expand=True, before=getAttendanceReportButton)
 
-    showContent(root_window, active_button)
+    rightFrame = ctk.CTkFrame(
+        master=root_window, bg_color="transparent", fg_color="#ffffff", width=960)
+    rightFrame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    showContent(rightFrame, active_button, root_window)

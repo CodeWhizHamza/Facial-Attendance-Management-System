@@ -8,22 +8,20 @@ import verify_admin
 from helper import truncateWidget
 
 
-def showContent(root_window, active_button):
+def showContent(rightFrame, active_button=None, root_window=None):
     fontTitle = ctk.CTkFont(family="Inter", size=64)
-    rightFrame = ctk.CTkFrame(
-        master=root_window, bg_color="transparent", fg_color="#ffffff", width=960)
-    rightFrame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
     if active_button == 'addStudentButton':
-        add_student.main(rightFrame)
+        add_student.main(rightFrame, root_window)
     elif active_button == 'showAllStudentsButton':
         student_list.main(rightFrame)
     elif active_button == 'initializeSystem':
-        verify_admin.isAdmin(rightFrame)
+        verify_admin.isAdmin(rightFrame, message="", root_window=root_window)
 
     if active_button is not None:
         return
 
+    truncateWidget(rightFrame)
     emptyFrame = ctk.CTkFrame(
         master=rightFrame, bg_color="transparent", fg_color="transparent", height=120)
     emptyFrame.pack(side=tk.TOP, fill=tk.X)

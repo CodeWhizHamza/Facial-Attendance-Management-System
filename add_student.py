@@ -10,9 +10,10 @@ from config import *
 from helper import showMessage, truncateWidget
 from tkinter.messagebox import showinfo
 import student_list
+import sideBar
 
 
-def main(rightFrame):
+def main(rightFrame, root_window=None):
     font40 = ctk.CTkFont('Arial', 40)
     font24 = ctk.CTkFont('Arial', 24)
     faceEncodings = tk.Variable()
@@ -172,11 +173,15 @@ def main(rightFrame):
             writer = csv.writer(file)
             writer.writerow(faceEncodings.get().split(','))
 
-        createTablesIfNotExists()
-        addNewColumnToEachCourseTable(studentCmsID)
+        try:
+            createTablesIfNotExists()
+            addNewColumnToEachCourseTable(studentCmsID)
+        except Exception as e:
+            pass
 
         showinfo("Success", "Student added successfully.")
-        student_list.main(rightFrame)
+
+        sideBar.showSidebar(root_window, 'showAllStudentsButton')
 
     emptyFrame = ctk.CTkFrame(
         master=rightFrame, bg_color="transparent", fg_color="transparent", height=120)

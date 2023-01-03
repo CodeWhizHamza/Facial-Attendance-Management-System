@@ -2,6 +2,7 @@ from tkinter import ttk
 import tkinter as tk
 import customtkinter as ctk
 from config import *
+import os
 
 from edit_student_details import editStudent
 from delete_student import deleteStudent
@@ -54,6 +55,14 @@ def main(rightFrame):
             studentId = studentDetails.get()[0]
             studentReport(studentId, rightFrame)
 
+    if not os.path.exists('./known_encodings'):
+        labelFrame = ctk.CTkFrame(
+            master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=80)
+        labelFrame.pack(side=tk.TOP, fill=tk.X)
+        tk.Label(master=labelFrame, text="No students found. Please add students first", bg='#ffffff', fg='#333333',
+                 wraplength=800, justify='left', anchor='w', font=font24).pack(side=tk.TOP, fill=tk.X, padx=80, pady=32)
+        return
+
     tableFrame = ctk.CTkFrame(
         master=rightFrame, bg_color="transparent", fg_color="transparent", width=960, height=640)
     tableFrame.pack(side=tk.TOP, fill=tk.X, padx=80, pady=64, anchor=tk.W)
@@ -98,7 +107,3 @@ def main(rightFrame):
     editButton.pack(side=tk.LEFT, pady=16)
     deleteButton.pack(side=tk.LEFT, padx=32, pady=16)
     getReportsButton.pack(side=tk.LEFT, pady=16)
-
-
-if __name__ == "__main__":
-    main()
